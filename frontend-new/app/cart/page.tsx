@@ -22,7 +22,7 @@ export default function CartPage() {
     e.preventDefault();
     setStatus('loading');
     try {
-      const order = await api.post('/orders', {
+      const order = await api.post<{ id: number }>('/orders', {
         ...form,
         items: items.map(i => ({ productId: i.product.id, quantity: i.quantity })),
       });
@@ -68,6 +68,7 @@ export default function CartPage() {
     } catch { setOneClickStatus('idle'); }
   };
 
+  const inputStyle = {
     width: '100%', background: '#141414', border: '1px solid rgba(201,169,110,0.12)',
     color: '#c8bfb0', padding: '0.875rem 1rem', fontSize: '0.8rem', outline: 'none',
     fontFamily: 'Inter, sans-serif',

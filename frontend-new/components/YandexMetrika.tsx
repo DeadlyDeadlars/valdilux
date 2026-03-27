@@ -1,8 +1,8 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 
-export default function YandexMetrika() {
+function YandexMetrikaInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -42,4 +42,12 @@ export default function YandexMetrika() {
   }, [pathname, searchParams]);
 
   return null;
+}
+
+export default function YandexMetrika() {
+  return (
+    <Suspense fallback={null}>
+      <YandexMetrikaInner />
+    </Suspense>
+  );
 }
