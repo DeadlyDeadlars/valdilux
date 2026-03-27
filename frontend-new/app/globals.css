@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
+@import "tailwindcss";
+
+:root {
+  --gold: #c9a96e;
+  --gold-dim: rgba(201,169,110,0.15);
+  --bg: #0f0f0f;
+  --bg2: #0a0a0a;
+  --bg3: #141414;
+  --bg4: #1a1a1a;
+  --text: #f0ebe3;
+  --text2: #c8bfb0;
+  --muted: #6a6058;
+  --muted2: #4a4540;
+  --border: rgba(201,169,110,0.08);
+  --border2: rgba(201,169,110,0.15);
+}
+
+[data-theme="light"] {
+  --gold: #a07840;
+  --gold-dim: rgba(160,120,64,0.1);
+  --bg: #f5f0ea;
+  --bg2: #ede8e0;
+  --bg3: #ffffff;
+  --bg4: #f0ebe3;
+  --text: #1a1510;
+  --text2: #3a3028;
+  --muted: #7a6a58;
+  --muted2: #9a8a78;
+  --border: rgba(160,120,64,0.12);
+  --border2: rgba(160,120,64,0.25);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  font-size: 16px;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Центрирование контейнеров */
+.max-w-3xl, .max-w-4xl, .max-w-5xl, .max-w-6xl, .max-w-7xl {
+  width: 100%;
+}
+
+
+
+.serif { font-family: 'Cormorant Garamond', serif; }
+
+.section-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+.gold-divider {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  justify-content: center;
+}
+.gold-divider::before,
+.gold-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(201,169,110,0.15);
+  max-width: 200px;
+}
+
+.btn-gold {
+  display: inline-block;
+  padding: 0.75rem 2.5rem;
+  border: 1px solid rgba(201,169,110,0.4);
+  color: var(--gold);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s;
+  font-family: 'Inter', sans-serif;
+}
+.btn-gold:hover {
+  background: rgba(201,169,110,0.08);
+  border-color: rgba(201,169,110,0.7);
+}
+
+.btn-gold-solid {
+  display: inline-block;
+  padding: 0.875rem 3rem;
+  background: var(--gold);
+  color: #0f0f0f;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+}
+.btn-gold-solid:hover { background: #d4b47a; }
+
+.nav-link {
+  color: #a09080;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.nav-link:hover { color: #c9a96e; }
+
+.footer-link {
+  display: block;
+  color: #4a4540;
+  font-size: 0.7rem;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s;
+}
+.footer-link:hover { color: #c9a96e; }
+
+.cat-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.4s;
+}
+.cat-card:hover {
+  border-color: var(--border2);
+  background: var(--bg4);
+}
+
+.product-card {
+  text-decoration: none;
+  display: block;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  transition: border-color 0.4s;
+}
+.product-card:hover { border-color: var(--border2); }
+.product-card:hover .product-card-img { transform: scale(1.04); }
+
+.product-card-img { transition: transform 0.6s; }
+
+.add-to-cart-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(201,169,110,0.2);
+  background: transparent;
+  color: #c9a96e;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+.add-to-cart-btn:hover {
+  background: rgba(201,169,110,0.1);
+  border-color: rgba(201,169,110,0.5);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up  { animation: fadeUp 0.9s ease both; }
+.fade-up-1 { animation: fadeUp 0.9s 0.15s ease both; }
+.fade-up-2 { animation: fadeUp 0.9s 0.3s ease both; }
+.fade-up-3 { animation: fadeUp 0.9s 0.45s ease both; }

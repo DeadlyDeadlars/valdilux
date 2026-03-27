@@ -1,0 +1,67 @@
+'use client';
+import { useEffect, useState } from 'react';
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const PASS = process.env.NEXT_PUBLIC_ADMIN_PASS || '';
+
+const STATUSES = ['new', 'processing', 'paid', 'shipped', 'delivered', 'cancelled'];
+const STATUS_LABELS: Record<string, string> = {
+  new: 'Новый', processing: 'В обработке', paid: 'Оплачен',
+  shipped: 'Отправлен', delivered: 'Доставлен', cancelled: 'Отменён',
+};
+
+export default function AdminOrdersPage() {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API}/orders/all`, { headers: { 'x-admin-pass': PASS } })
+      .then(r => r.json()).then(setOrders).finally(() => setLoading(false));
+  }, []);
+
+  const updateStatus = async (id: number, status: string) => {
+    await fetch(`${API}/orders/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-admin-pass': PASS },
+      body: JSON.stringify({ status }),
+    });
+    setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+  };
+
+  const td = { padding: '0.75rem 1rem', color: '#c8bfb0', fontSize: '0.78rem', borderBottom: '1px solid rgba(201,169,110,0.06)' };
+  const th = { padding: '0.5rem 1rem', color: '#4a4540', fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase' as const, textAlign: 'left' as const };
+
+  return (
+    <div>
+      <h1 className="serif" style={{ color: '#f0ebe3', fontSize: '1.8rem', fontWeight: 300, marginBottom: '2rem' }}>Заказы</h1>
+      {loading ? <div style={{ color: '#4a4540' }}>Загрузка...</div> : (
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#141414', border: '1px solid rgba(201,169,110,0.08)' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(201,169,110,0.1)' }}>
+                {['#', 'Клиент', 'Телефон', 'Сумма', 'Дата', 'Статус'].map(h => <th key={h} style={th}>{h}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map(o => (
+                <tr key={o.id}>
+                  <td style={td}>#{o.id}</td>
+                  <td style={td}>{o.name}</td>
+                  <td style={td}>{o.phone}</td>
+                  <td style={{ ...td, color: '#c9a96e' }}>{o.total.toLocaleString('ru-RU')} ₽</td>
+                  <td style={{ ...td, color: '#6a6058' }}>{new Date(o.createdAt).toLocaleDateString('ru-RU')}</td>
+                  <td style={td}>
+                    <select value={o.status} onChange={e => updateStatus(o.id, e.target.value)}
+                      style={{ background: '#1a1a1a', border: '1px solid rgba(201,169,110,0.15)', color: '#c9a96e', padding: '0.3rem 0.5rem', fontSize: '0.7rem', cursor: 'pointer' }}>
+                      {STATUSES.map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
