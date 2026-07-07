@@ -21,8 +21,8 @@ export async function generateStaticParams() {
   return productsData.map((p: any) => ({ slug: p.slug }));
 }
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   console.log('[ProductPage] Loading product with slug:', slug);
   let product: Product;
   try {
