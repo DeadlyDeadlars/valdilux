@@ -14,6 +14,8 @@ import productsData from '@/public/products.json';
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:4000';
 const USE_STATIC = process.env.NEXT_PUBLIC_USE_STATIC === 'true';
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   // Генерируем статические параметры из products.json
   return productsData.map((p: any) => ({ slug: p.slug }));

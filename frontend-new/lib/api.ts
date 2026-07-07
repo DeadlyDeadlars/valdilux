@@ -3,7 +3,7 @@ import categoriesData from '@/public/categories.json';
 import postsData from '@/public/posts.json';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
-const USE_STATIC = process.env.NEXT_PUBLIC_USE_STATIC === 'true';
+const USE_STATIC = process.env.NEXT_PUBLIC_USE_STATIC !== 'false'; // По умолчанию true!
 
 console.log('[API] Using API URL:', API, 'Static mode:', USE_STATIC);
 
