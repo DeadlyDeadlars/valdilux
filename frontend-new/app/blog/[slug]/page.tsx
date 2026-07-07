@@ -9,8 +9,8 @@ type Post = {
   createdAt: string;
 };
 
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   let post: Post;
   try {
     post = await api.get<Post>(`/posts/${slug}`);

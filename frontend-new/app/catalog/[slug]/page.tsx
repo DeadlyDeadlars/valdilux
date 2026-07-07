@@ -12,12 +12,13 @@ import ProductDescriptionOverflow from '@/components/ProductDescriptionOverflow'
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:4000';
 const USE_STATIC = process.env.NEXT_PUBLIC_USE_STATIC === 'true';
 
-export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function ProductPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   let product: Product;
   try {
     product = await api.get<Product>(`/products/${slug}`);
-  } catch {
+  } catch (error) {
+    console.error('Error loading product:', error);
     notFound();
   }
 
