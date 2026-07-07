@@ -16,7 +16,7 @@ export interface Product {
   label?: string | null;
   inStock: boolean;
   images: string[];
-  options?: string;
+  options?: string | any[];
   categoryId: number;
   category: Category;
 }

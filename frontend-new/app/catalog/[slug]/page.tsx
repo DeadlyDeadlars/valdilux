@@ -14,6 +14,15 @@ import productsData from '@/public/products.json';
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:4000';
 const USE_STATIC = process.env.NEXT_PUBLIC_USE_STATIC !== 'false';
 
+function parseOptions(options: any): any[] {
+  if (!options) return [];
+  if (Array.isArray(options)) return options;
+  if (typeof options === 'string' && options.trim()) {
+    try { return JSON.parse(options); } catch { return []; }
+  }
+  return [];
+}
+
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
@@ -88,8 +97,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             )}
 
             <div className="product-info-content">
-              {product.options && JSON.parse(product.options).length > 0 && (
-                <PriceCalculator basePrice={product.price} options={JSON.parse(product.options)} />
+              {parseOptions(product.options).length > 0 && (
+                <PriceCalculator basePrice={product.price} options={parseOptions(product.options)} />
               )}
 
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
