@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import postsData from '@/public/posts.json';
 
 type Post = {
   id: number;
@@ -8,6 +9,10 @@ type Post = {
   content: string;
   createdAt: string;
 };
+
+export async function generateStaticParams() {
+  return (postsData as any[]).filter((p: any) => p.type === 'article').map((p: any) => ({ slug: p.slug }));
+}
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const { slug } = params;

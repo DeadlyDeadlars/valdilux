@@ -9,16 +9,25 @@ import ProductGallery from './ProductGallery';
 import AskQuestion from './AskQuestion';
 import ProductDescriptionOverflow from '@/components/ProductDescriptionOverflow';
 
+import productsData from '@/public/products.json';
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:4000';
 const USE_STATIC = process.env.NEXT_PUBLIC_USE_STATIC === 'true';
 
+export async function generateStaticParams() {
+  // Генерируем статические параметры из products.json
+  return productsData.map((p: any) => ({ slug: p.slug }));
+}
+
 export default async function ProductPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
+  console.log('[ProductPage] Loading product with slug:', slug);
   let product: Product;
   try {
     product = await api.get<Product>(`/products/${slug}`);
+    console.log('[ProductPage] Product loaded:', product.name);
   } catch (error) {
-    console.error('Error loading product:', error);
+    console.error('[ProductPage] Error loading product:', slug, error);
     notFound();
   }
 
