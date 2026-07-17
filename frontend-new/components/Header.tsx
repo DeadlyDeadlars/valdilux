@@ -7,16 +7,14 @@ import { useRouter } from 'next/navigation';
 import ThemeToggle from './ThemeToggle';
 
 const CATEGORIES = [
-  { label: 'Письменный стол', slug: 'pismennye-stoly' },
-  { label: 'Книжный шкаф', slug: 'shkafy' },
-  { label: 'Стеллажи', slug: 'stellazhi' },
-  { label: 'Комоды', slug: 'komody' },
-  { label: 'Журнальные столики', slug: 'zhurnalnye-stoliki' },
-  { label: 'Тумбы', slug: 'tumby' },
-  { label: 'Брифинги', slug: 'brifing' },
-  { label: 'Консоли', slug: 'konsoli' },
-  { label: 'Сервант', slug: 'servant' },
-  { label: 'ТВ тумба', slug: 'tv-tumba' },
+  { label: 'Стол письменный', slug: 'стол-письменный' },
+  { label: 'Шкаф книжный', slug: 'шкаф-книжный' },
+  { label: 'Стеллаж', slug: 'стеллаж' },
+  { label: 'Комод', slug: 'комод' },
+  { label: 'Тумба', slug: 'тумба' },
+  { label: 'Сервант', slug: 'сервант' },
+  { label: 'Брифинг', slug: 'брифинг' },
+  { label: 'Индивидуальный проект', slug: 'индивидуальный-проект' },
 ];
 
 export default function Header() {

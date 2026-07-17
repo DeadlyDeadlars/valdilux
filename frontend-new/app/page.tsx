@@ -24,14 +24,14 @@ const W = { maxWidth: '80rem', margin: '0 auto', padding: '0 1.5rem' };
 const CENTER: React.CSSProperties = { textAlign: 'center' };
 
 const MAIN_CATEGORIES = [
-  { name: 'Письменный стол', slug: 'письменный-стол' },
-  { name: 'Книжный шкаф', slug: 'книжный-шкаф' },
+  { name: 'Стол письменный', slug: 'стол-письменный' },
+  { name: 'Шкаф книжный', slug: 'шкаф-книжный' },
   { name: 'Стеллаж', slug: 'стеллаж' },
-  { name: 'Сервант', slug: 'сервант' },
   { name: 'Комод', slug: 'комод' },
-  { name: 'Журнальный стол', slug: 'журнальный-стол' },
-  { name: 'Брифинг стола', slug: 'брифинг-стола' },
-  { name: 'ТВ тумба', slug: 'тв-тумба' },
+  { name: 'Тумба', slug: 'тумба' },
+  { name: 'Сервант', slug: 'сервант' },
+  { name: 'Брифинг', slug: 'брифинг' },
+  { name: 'Индивидуальный проект', slug: 'индивидуальный-проект' },
 ];
 
 export default async function HomePage() {
@@ -70,12 +70,16 @@ export default async function HomePage() {
             { num: '20+', label: 'лет мастерства' },
             { num: '100%', label: 'гарантия качества' },
             { icon: (
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--gold)' }}>
-                <path d="M12 22v-7"/>
-                <path d="M12 15l-4-4H5l7-7 7 7h-3l-4 4z"/>
-                <path d="M8.5 15H4l8-8 8 8h-4.5"/>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--gold)' }}>
+                {/* Рука с листьями - новая иконка экологичности дерева */}
+                <path d="M8 16c-1.5 0-3-1.5-3-3.5S6.5 9 8 9c.5-2 2-3.5 4-3.5s3.5 1.5 4 3.5c1.5 0 3 1.5 3 3.5S17.5 16 16 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                <path d="M12 12.5v8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M7 18c0 0 1-1 2.5-1s2.5 1 2.5 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M17 18c0 0-1-1-2.5-1s-2.5 1-2.5 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <ellipse cx="9.5" cy="10" rx="1.5" ry="2" fill="currentColor" opacity="0.3"/>
+                <ellipse cx="14.5" cy="10" rx="1.5" ry="2" fill="currentColor" opacity="0.3"/>
               </svg>
-            ), label: 'мотив дерева' },
+            ), label: 'экологичность' },
           ].map(({ num, icon, label }) => (
             <div key={label} style={{ ...CENTER, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div style={{ color: '#c9a96e', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', height: 'clamp(2rem, 4vw, 3rem)' }} className={num ? 'serif' : ''}>

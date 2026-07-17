@@ -4,7 +4,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import type { Category, ProductsResponse } from '@/lib/types';
 import ProductCard from '@/components/ProductCard';
-import { getActiveFilterValues } from '@/lib/filters';
 
 const SORTS = [
   { value: 'popular', label: 'Популярные' },
@@ -25,17 +24,8 @@ export default function CatalogClient({ categories }: { categories: Category[] }
   useEffect(() => { setIsMounted(true); }, []);
 
   const category = searchParams.get('category') || '';
-  const material = searchParams.get('material') || '';
   const sort = searchParams.get('sort') || 'popular';
   const page = Number(searchParams.get('page') || 1);
-  const minPrice = searchParams.get('minPrice') || '';
-  const maxPrice = searchParams.get('maxPrice') || '';
-
-  const [priceMin, setPriceMin] = useState(minPrice);
-  const [priceMax, setPriceMax] = useState(maxPrice);
-
-  // Получаем активные материалы из конфигурации
-  const MATERIALS = getActiveFilterValues('material');
 
   const setParam = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -44,18 +34,15 @@ export default function CatalogClient({ categories }: { categories: Category[] }
     router.push(`/catalog?${params.toString()}`);
   };
 
-  const reset = () => { setPriceMin(''); setPriceMax(''); router.push('/catalog'); };
+  const reset = () => { router.push('/catalog'); };
 
   const load = useCallback(async () => {
-    console.log('[CatalogClient] Loading products with params:', { category, material, sort, page, minPrice, maxPrice });
+    console.log('[CatalogClient] Loading products with params:', { category, sort, page });
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (category) params.set('category', category);
-      if (material) params.set('material', material);
       if (sort && sort !== 'popular') params.set('sort', sort);
-      if (minPrice) params.set('minPrice', minPrice);
-      if (maxPrice) params.set('maxPrice', maxPrice);
       params.set('page', String(page));
       params.set('limit', '12');
       console.log('[CatalogClient] Fetching:', `/products?${params}`);
@@ -67,7 +54,7 @@ export default function CatalogClient({ categories }: { categories: Category[] }
       setProducts(null); 
     }
     setLoading(false);
-  }, [category, material, sort, page, minPrice, maxPrice]);
+  }, [category, sort, page]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -105,28 +92,6 @@ export default function CatalogClient({ categories }: { categories: Category[] }
                 <span style={{ color: '#3a3530' }}>{cat._count?.products}</span>
               </button>
             ))}
-          </div>
-
-          <div>
-            <div style={{ color: 'var(--muted)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Материал</div>
-            {MATERIALS.map(m => (
-              <button key={m} onClick={() => setParam('material', material === m ? '' : m)}
-                style={{ display: 'block', width: '100%', padding: '0.4rem 0', background: 'none', border: 'none', cursor: 'pointer', color: material === m ? '#c9a96e' : '#6a6058', fontSize: '0.7rem', textAlign: 'left', transition: 'color 0.3s' }}
-              >{m}</button>
-            ))}
-          </div>
-
-          <div style={{ marginTop: '2rem' }}>
-            <div style={{ color: 'var(--muted)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Цена, ₽</div>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <input type="number" placeholder="От" value={priceMin} onChange={e => setPriceMin(e.target.value)}
-                style={{ width: '50%', background: 'var(--bg3)', border: '1px solid rgba(201,169,110,0.12)', color: 'var(--text2)', padding: '0.4rem 0.5rem', fontSize: '0.7rem', outline: 'none' }} />
-              <input type="number" placeholder="До" value={priceMax} onChange={e => setPriceMax(e.target.value)}
-                style={{ width: '50%', background: 'var(--bg3)', border: '1px solid rgba(201,169,110,0.12)', color: 'var(--text2)', padding: '0.4rem 0.5rem', fontSize: '0.7rem', outline: 'none' }} />
-            </div>
-            <button onClick={() => { setParam('minPrice', priceMin); setParam('maxPrice', priceMax); }}
-              style={{ marginTop: '0.5rem', width: '100%', padding: '0.4rem', background: 'none', border: '1px solid rgba(201,169,110,0.2)', color: '#c9a96e', fontSize: '0.6rem', letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer' }}
-            >Применить</button>
           </div>
           </div>
         </aside>

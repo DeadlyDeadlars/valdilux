@@ -43,7 +43,6 @@ export default function ContactsPage() {
               content: (
                 <>
                   <a href="tel:+79058052465" style={{ display: 'block', color: 'var(--text2)', fontSize: '0.9rem', textDecoration: 'none', marginBottom: '0.4rem' }}>+7 (905) 805-24-65</a>
-                  <a href="tel:+74952862926" style={{ display: 'block', color: 'var(--text2)', fontSize: '0.9rem', textDecoration: 'none', marginBottom: '0.4rem' }}>+7 (495) 286-29-26</a>
                   <p style={{ color: 'var(--muted2)', fontSize: '0.7rem', marginTop: '0.5rem' }}>Готовы ответить на любой вопрос</p>
                 </>
               ),

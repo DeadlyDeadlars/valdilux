@@ -13,16 +13,14 @@ export default function Footer() {
             <div className="section-label mb-3 md:mb-4 md:text-xs" style={{ fontSize: '0.55rem' }}>Каталог</div>
             {([
               ['Все товары', '/catalog'],
-              ['Письменный стол', '/catalog?category=pismennye-stoly'],
-              ['Книжный шкаф', '/catalog?category=shkafy'],
-              ['Стеллажи', '/catalog?category=stellazhi'],
-              ['Комоды', '/catalog?category=komody'],
-              ['Журнальные столики', '/catalog?category=zhurnalnye-stoliki'],
-              ['Тумбы', '/catalog?category=tumby'],
-              ['Брифинги', '/catalog?category=brifing'],
-              ['Консоли', '/catalog?category=konsoli'],
-              ['Сервант', '/catalog?category=servant'],
-              ['ТВ тумба', '/catalog?category=tv-tumba'],
+              ['Стол письменный', '/catalog?category=стол-письменный'],
+              ['Шкаф книжный', '/catalog?category=шкаф-книжный'],
+              ['Стеллаж', '/catalog?category=стеллаж'],
+              ['Комод', '/catalog?category=комод'],
+              ['Тумба', '/catalog?category=тумба'],
+              ['Сервант', '/catalog?category=сервант'],
+              ['Брифинг', '/catalog?category=брифинг'],
+              ['Индивидуальный проект', '/catalog?category=индивидуальный-проект'],
             ] as [string,string][]).map(([l, h]) => (
               <Link key={h} href={h} className="footer-link" style={{ fontSize: '0.6rem', marginBottom: '0.4rem' }}>{l}</Link>
             ))}
