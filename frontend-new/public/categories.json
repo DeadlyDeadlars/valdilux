@@ -1,110 +1,66 @@
 [
   {
     "id": 1,
-    "name": "Шкафы",
-    "slug": "cabinets",
-    "image": null
+    "name": "Стол письменный",
+    "slug": "стол-письменный",
+    "_count": {
+      "products": 5
+    }
   },
   {
     "id": 2,
-    "name": "Стулья",
-    "slug": "chairs",
-    "image": null
+    "name": "Шкаф книжный",
+    "slug": "шкаф-книжный",
+    "_count": {
+      "products": 1
+    }
   },
   {
     "id": 3,
-    "name": "Столы",
-    "slug": "tables",
-    "image": null
+    "name": "Стеллаж",
+    "slug": "стеллаж",
+    "_count": {
+      "products": 1
+    }
   },
   {
     "id": 4,
-    "name": "Диваны",
-    "slug": "sofas",
-    "image": null
+    "name": "Комод",
+    "slug": "комод",
+    "_count": {
+      "products": 0
+    }
   },
   {
     "id": 5,
-    "name": "Письменный стол",
-    "slug": "письменный-стол",
-    "image": null
+    "name": "Тумба",
+    "slug": "тумба",
+    "_count": {
+      "products": 0
+    }
   },
   {
     "id": 6,
-    "name": "Журнальные столики",
-    "slug": "журнальные-столики",
-    "image": null
+    "name": "Сервант",
+    "slug": "сервант",
+    "_count": {
+      "products": 0
+    }
   },
   {
     "id": 7,
-    "name": "Книжный шкаф",
-    "slug": "книжный-шкаф",
-    "image": null
+    "name": "Брифинг",
+    "slug": "брифинг",
+    "_count": {
+      "products": 0
+    }
   },
   {
     "id": 8,
-    "name": "Тумбы",
-    "slug": "тумбы",
-    "image": null
-  },
-  {
-    "id": 9,
-    "name": "Брифинги",
-    "slug": "брифинги",
-    "image": null
-  },
-  {
-    "id": 10,
-    "name": "Стеллажи",
-    "slug": "стеллажи",
-    "image": null
-  },
-  {
-    "id": 11,
-    "name": "Комоды",
-    "slug": "комоды",
-    "image": null
-  },
-  {
-    "id": 12,
-    "name": "Консоли",
-    "slug": "консоли",
-    "image": null
-  },
-  {
-    "id": 13,
-    "name": "Брифинг стола",
-    "slug": "брифинг-стола",
-    "image": null
-  },
-  {
-    "id": 14,
-    "name": "Журнальный стол",
-    "slug": "журнальный-стол",
-    "image": null
-  },
-  {
-    "id": 15,
-    "name": "Комод",
-    "slug": "комод",
-    "image": null
-  },
-  {
-    "id": 16,
-    "name": "Стеллаж",
-    "slug": "стеллаж",
-    "image": null
-  },
-  {
-    "id": 17,
-    "name": "Сервант",
-    "slug": "сервант",
-    "image": null
-  },
-  {
-    "id": 18,
-    "name": "ТВ тумба",
-    "slug": "тв-тумба",
-    "image": null
+    "name": "Индивидуальный проект",
+    "slug": "индивидуальный-проект",
+    "_count": {
+      "products": 0
+    }
   }
 ]
