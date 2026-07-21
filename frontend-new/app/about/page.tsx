@@ -7,7 +7,6 @@ export default function AboutPage() {
           <h1 className="serif" style={{ color: 'var(--text)', fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 300, lineHeight: 1.1 }}>
             О компании ValDiLux
           </h1>
-          <p style={{ color: 'var(--muted)', fontSize: '0.85rem', marginTop: '1rem' }}>Мебельный цех Мининых — создаём премиальную мебель</p>
         </div>
       </div>
 
@@ -52,7 +51,7 @@ export default function AboutPage() {
           <h2 className="serif" style={{ color: 'var(--text)', fontSize: '1.6rem', fontWeight: 300, marginBottom: '2rem' }}>Материалы премиум-класса</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { title: 'Массив дерева', text: 'Дуб, бук, ясень — только отборная древесина с естественной сушкой' },
+              { title: 'Массив дерева', text: 'Дуб, бук, ясень — только отборная древесина камерной сушки' },
               { title: 'Натуральная кожа', text: 'Обтяжка столешниц натуральной кожей премиум-качества' },
               { title: 'Фурнитура', text: 'Европейская фурнитура с доводчиками и гарантией долговечности' },
             ].map(({ title, text }) => (

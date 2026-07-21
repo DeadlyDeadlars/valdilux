@@ -6,8 +6,7 @@ export default function Footer() {
       <div style={{ maxWidth: '80rem', margin: '0 auto', padding: '0 1.5rem' }}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 mb-8 md:mb-12">
           <div>
-            <div className="serif mb-2 md:mb-3 md:text-lg" style={{ color: '#c9a96e', fontSize: '0.9rem', fontWeight: 300 }}>Valdilux</div>
-            <p className="md:text-xs md:leading-relaxed" style={{ color: '#3a3530', fontSize: '0.6rem', lineHeight: 1.6 }}>Мебельный цех Мининых</p>
+            <div className="serif mb-2 md:mb-3 md:text-lg" style={{ color: '#c9a96e', fontSize: '0.9rem', fontWeight: 300 }}>ValDiLux-mebel</div>
           </div>
           <div>
             <div className="section-label mb-3 md:mb-4 md:text-xs" style={{ fontSize: '0.55rem' }}>Каталог</div>
@@ -42,7 +41,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="flex flex-col md:flex-row gap-2 md:gap-2 md:justify-between md:pt-6" style={{ borderTop: '1px solid rgba(201,169,110,0.06)', paddingTop: '1rem' }}>
-          <p className="md:text-xs" style={{ color: '#2a2520', fontSize: '0.55rem' }}>© 2024–2025 ValDiLux. Мебельный цех Мининых. Все права защищены.</p>
+          <p className="md:text-xs" style={{ color: '#2a2520', fontSize: '0.55rem' }}>© 2024–2025 ValDiLux. Все права защищены.</p>
           <p className="md:text-xs" style={{ color: '#2a2520', fontSize: '0.55rem' }}>ИП Минин Дмитрий Витальевич | ИНН 661903101020</p>
         </div>
       </div>
