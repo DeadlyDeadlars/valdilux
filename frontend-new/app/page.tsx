@@ -162,7 +162,7 @@ export default async function HomePage() {
           <div style={{ aspectRatio: '4/3', overflow: 'hidden', border: '1px solid var(--border2)' }}>
             <img
               src="/photos/individual-projects/ПОСТАВИТЬ1.jpg"
-              alt="Индивидуальный проект"
+              alt="Индивидуальный проект мебели из массива дерева — кабинет руководителя"
               style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }}
             />
           </div>
@@ -200,9 +200,9 @@ export default async function HomePage() {
           <div className="gold-divider" style={{ justifyContent: 'center' }}><span className="section-label">Почему ValDiLux-mebel</span></div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: 'Гарантия качества', text: 'Используем только сертифицированные материалы. Гарантия на все изделия — 3 года.' },
-              { title: 'Точно в срок', text: 'Соблюдаем договорные сроки. Производство от 14 до 60 календарных дней.' },
-              { title: 'Доставка и сборка', text: 'Доставляем по всей России. Самовывоз г. Екатеринбург.' },
+              { title: 'Массив дерева', text: 'Изготавливаем мебель из массива дуба, ясеня и бука. Только камерная сушка и сертифицированные материалы. Гарантия 3 года.' },
+              { title: 'Сроки изготовления', text: 'От эскиза до готового изделия — от 14 до 60 дней. Соблюдаем договорные сроки, информируем на каждом этапе.' },
+              { title: 'Доставка по РФ', text: 'Доставляем мебель из массива по всей России. Самовывоз из Екатеринбурга. Сборка и установка.' },
             ].map(({ title, text }) => (
               <div key={title} style={{ ...CENTER, padding: '0 1.5rem' }}>
                 <div style={{ width: 56, height: 56, border: '1px solid rgba(201,169,110,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
@@ -213,6 +213,13 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* SEO ТЕКСТ */}
+      <section style={{ padding: '2rem 1.5rem', borderTop: '1px solid var(--border)', background: 'var(--bg)' }}>
+        <div style={{ maxWidth: '64rem', margin: '0 auto', textAlign: 'center', fontSize: '0.75rem', color: 'var(--muted2)', lineHeight: 1.9 }}>
+          <p>ValDiLux — производство премиальной мебели из массива дерева в Екатеринбурге. Изготавливаем письменные столы из дуба и бука, книжные шкафы, стеллажи, тумбы, комоды, серванты на заказ. Работаем с массивом дуба, ясеня и бука. Возможно изготовление мебели по индивидуальным размерам и дизайн-проектам. Доставка по Екатеринбургу и всей России.</p>
         </div>
       </section>
 

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import FooterAccordion from './FooterAccordion';
 
 export default function Footer() {
   return (
@@ -9,35 +10,38 @@ export default function Footer() {
             <div className="serif mb-2 md:mb-3 md:text-lg" style={{ color: '#c9a96e', fontSize: '0.9rem', fontWeight: 300 }}>ValDiLux-mebel</div>
           </div>
           <div>
-            <div className="section-label mb-3 md:mb-4 md:text-xs" style={{ fontSize: '0.55rem' }}>Каталог</div>
-            {([
-              ['Все товары', '/catalog'],
-              ['Стол письменный', '/catalog?category=стол-письменный'],
-              ['Шкаф книжный', '/catalog?category=шкаф-книжный'],
-              ['Стеллаж', '/catalog?category=стеллаж'],
-              ['Комод', '/catalog?category=комод'],
-              ['Тумба', '/catalog?category=тумба'],
-              ['Сервант', '/catalog?category=сервант'],
-              ['Брифинг', '/catalog?category=брифинг'],
-              ['Индивидуальный проект', '/catalog?category=индивидуальный-проект'],
-            ] as [string,string][]).map(([l, h]) => (
-              <Link key={h} href={h} className="footer-link" style={{ fontSize: '0.6rem', marginBottom: '0.4rem' }}>{l}</Link>
-            ))}
+            <FooterAccordion title="Каталог">
+              {([
+                ['Все товары', '/catalog'],
+                ['Стол письменный', '/catalog?category=стол-письменный'],
+                ['Шкаф книжный', '/catalog?category=шкаф-книжный'],
+                ['Стеллаж', '/catalog?category=стеллаж'],
+                ['Комод', '/catalog?category=комод'],
+                ['Тумба', '/catalog?category=тумба'],
+                ['Сервант', '/catalog?category=сервант'],
+                ['Брифинг', '/catalog?category=брифинг'],
+                ['Индивидуальный проект', '/catalog?category=индивидуальный-проект'],
+              ] as [string,string][]).map(([l, h]) => (
+                <Link key={h} href={h} className="footer-link" style={{ fontSize: '0.6rem', marginBottom: '0.4rem' }}>{l}</Link>
+              ))}
+            </FooterAccordion>
           </div>
           <div>
-            <div className="section-label mb-3 md:mb-4 md:text-xs" style={{ fontSize: '0.55rem' }}>Компания</div>
-            {([['О фабрике', '/about'], ['Контакты', '/contacts'], ['Доставка', '/delivery'], ['Оплата', '/payment'], ['Отзывы', '/reviews'], ['FAQ', '/faq'], ['Наши проекты', '/cases'], ['Блог', '/blog'], ['Политика конфиденциальности', '/privacy'], ['Пользовательское соглашение', '/terms']] as [string,string][]).map(([l, h]) => (
-              <Link key={h} href={h} className="footer-link" style={{ fontSize: '0.6rem', marginBottom: '0.4rem' }}>{l}</Link>
-            ))}
+            <FooterAccordion title="Компания">
+              {([['О фабрике', '/about'], ['Контакты', '/contacts'], ['Доставка', '/delivery'], ['Оплата', '/payment'], ['Отзывы', '/reviews'], ['FAQ', '/faq'], ['Наши проекты', '/cases'], ['Блог', '/blog'], ['Политика конфиденциальности', '/privacy'], ['Пользовательское соглашение', '/terms']] as [string,string][]).map(([l, h]) => (
+                <Link key={h} href={h} className="footer-link" style={{ fontSize: '0.6rem', marginBottom: '0.4rem' }}>{l}</Link>
+              ))}
+            </FooterAccordion>
           </div>
           <div>
-            <div className="section-label mb-3 md:mb-4 md:text-xs" style={{ fontSize: '0.55rem' }}>Контакты</div>
-            <a href="tel:+79058052465" className="footer-link" style={{ fontSize: '0.6rem', marginBottom: '0.4rem' }}>+7 (905) 805-24-65</a>
-            <a href="mailto:valdilux-mebel@yandex.ru" className="footer-link" style={{ fontSize: '0.6rem', marginBottom: '0.4rem' }}>valdilux-mebel@yandex.ru</a>
-            <div className="flex gap-3 md:gap-4 mt-2 md:mt-3">
-              <a href="https://t.me/Valdilux_mebel" target="_blank" rel="noopener" className="nav-link" style={{ fontSize: '0.6rem' }}>Telegram</a>
-              <a href="https://max.ru/u/f9LHodD0cOKBmU6imfN_JGcs3nE4xAXE4j3ow9K7QaKrK-zb4W1Yj_N19G4" target="_blank" rel="noopener" className="nav-link" style={{ fontSize: '0.6rem' }}>Max</a>
-            </div>
+            <FooterAccordion title="Контакты">
+              <a href="tel:+79058052465" className="footer-link" style={{ fontSize: '0.6rem', marginBottom: '0.4rem' }}>+7 (905) 805-24-65</a>
+              <a href="mailto:valdilux-mebel@yandex.ru" className="footer-link" style={{ fontSize: '0.6rem', marginBottom: '0.4rem' }}>valdilux-mebel@yandex.ru</a>
+              <div className="flex gap-3 md:gap-4 mt-2 md:mt-3">
+                <a href="https://t.me/Valdilux_mebel" target="_blank" rel="noopener" className="nav-link" style={{ fontSize: '0.6rem' }}>Telegram</a>
+                <a href="https://max.ru/u/f9LHodD0cOKBmU6imfN_JGcs3nE4xAXE4j3ow9K7QaKrK-zb4W1Yj_N19G4" target="_blank" rel="noopener" className="nav-link" style={{ fontSize: '0.6rem' }}>Max</a>
+              </div>
+            </FooterAccordion>
           </div>
         </div>
         <div className="flex flex-col md:flex-row gap-2 md:gap-2 md:justify-between md:pt-6" style={{ borderTop: '1px solid rgba(201,169,110,0.06)', paddingTop: '1rem' }}>

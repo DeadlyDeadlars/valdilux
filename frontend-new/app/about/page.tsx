@@ -1,3 +1,14 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'О компании ValDiLux — производство мебели из массива в Екатеринбурге',
+  description: 'Более 20 лет изготавливаем премиальную мебель из массива дуба, бука и ясеня. Собственное производство в Екатеринбурге. Индивидуальные проекты. Гарантия 3 года.',
+  openGraph: {
+    title: 'О компании ValDiLux — производство мебели из массива',
+    description: 'Более 20 лет изготавливаем премиальную мебель из массива дуба, бука и ясеня.',
+  },
+};
+
 export default function AboutPage() {
   return (
     <div style={{ paddingTop: '5rem', minHeight: '100vh' }}>

@@ -39,7 +39,7 @@ export default function ProductGallery({
           onClick={() => current.type === 'image' && setLightbox(true)}
         >
           {current.type === 'image' ? (
-            <img src={`${apiBase}${current.src}`} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={`${apiBase}${current.src}`} alt={`${name} — фото премиальной мебели из массива дерева`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           ) : (
             <video autoPlay muted loop playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }}>
               <source src={`${apiBase}${current.src}`} type="video/mp4" />

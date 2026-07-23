@@ -61,10 +61,10 @@ export default function ContactsPage() {
             {
               title: 'Мессенджеры',
               content: (
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <a href="https://t.me/Valdilux_mebel" target="_blank" rel="noopener" className="btn-gold" style={{ fontSize: '0.6rem' }}>Telegram</a>
-                  <a href="https://max.ru/u/f9LHodD0cOKBmU6imfN_JGcs3nE4xAXE4j3ow9K7QaKrK-zb4W1Yj_N19G4" target="_blank" rel="noopener" className="btn-gold" style={{ fontSize: '0.6rem' }}>Max</a>
-                  <a href="https://wa.me/79058052465" target="_blank" rel="noopener" className="btn-gold" style={{ fontSize: '0.6rem' }}>WhatsApp</a>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <a href="https://t.me/Valdilux_mebel" target="_blank" rel="noopener" className="btn-gold" style={{ fontSize: '0.6rem', padding: '0.75rem 1.5rem' }}>Telegram</a>
+                  <a href="https://max.ru/u/f9LHodD0cOKBmU6imfN_JGcs3nE4xAXE4j3ow9K7QaKrK-zb4W1Yj_N19G4" target="_blank" rel="noopener" className="btn-gold" style={{ fontSize: '0.6rem', padding: '0.75rem 1.5rem' }}>Max</a>
+                  <a href="https://wa.me/79058052465" target="_blank" rel="noopener" className="btn-gold" style={{ fontSize: '0.6rem', padding: '0.75rem 1.5rem' }}>WhatsApp</a>
                 </div>
               ),
             },

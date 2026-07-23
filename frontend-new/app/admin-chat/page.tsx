@@ -3,7 +3,6 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './AdminChat.module.css';
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:4000/ws/chat';
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 type Message = { from: 'user' | 'manager'; text: string; ts: number; chatId: string };
 
@@ -22,6 +21,7 @@ export default function AdminChatPage() {
   const reconnectAttempts = useRef(0);
   const mounted = useRef(true);
   const tokenRef = useRef<string | null>(null);
+  const connectRef = useRef<((token: string) => void) | null>(null);
 
   const connect = useCallback((token: string) => {
     tokenRef.current = token;
@@ -63,10 +63,14 @@ export default function AdminChatPage() {
       if (tokenRef.current) {
         const delay = Math.min(1000 * 2 ** reconnectAttempts.current, 30000);
         reconnectAttempts.current++;
-        reconnectTimer.current = setTimeout(() => connect(tokenRef.current!), delay);
+        reconnectTimer.current = setTimeout(() => connectRef.current?.(tokenRef.current!), delay);
       }
     };
   }, []);
+
+  useEffect(() => {
+    connectRef.current = connect;
+  }, [connect]);
 
   useEffect(() => {
     mounted.current = true;

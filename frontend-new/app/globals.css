@@ -355,10 +355,10 @@ body {
 /* Mobile layout */
 @media (max-width: 767px) {
   .product-layout {
-    gap: 2rem;
+    gap: 1.25rem;
   }
   
   .product-description-wrapper {
-    margin: 1.5rem 0;
+    margin: 0.5rem 0;
   }
 }

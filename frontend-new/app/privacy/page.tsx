@@ -1,3 +1,10 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Политика конфиденциальности — ValDiLux',
+  description: 'Политика обработки персональных данных интернет-магазина мебели ValDiLux.',
+};
+
 export default function PrivacyPage() {
   return (
     <div style={{ paddingTop: '5rem', minHeight: '100vh' }}>

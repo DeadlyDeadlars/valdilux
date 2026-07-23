@@ -67,7 +67,7 @@ export default function ReviewsPage() {
 
       <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '4rem 1.5rem' }}>
         {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: 'var(--border)', marginBottom: '4rem' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: '1px', background: 'var(--border)', marginBottom: '4rem' }}>
           {[
             { value: '500+', label: 'Довольных клиентов' },
             { value: '4.9', label: 'Средняя оценка' },

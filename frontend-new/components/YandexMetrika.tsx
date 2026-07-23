@@ -1,53 +1,35 @@
 'use client';
-import { useEffect, Suspense } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
-function YandexMetrikaInner() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
+export default function YandexMetrika() {
   useEffect(() => {
     const id = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID;
     if (!id) return;
 
-    // Инициализация
-    if (!(window as any).ym) {
-      (window as any).ym = (window as any).ym || function(...args: any[]) {
-        ((window as any).ym.a = (window as any).ym.a || []).push(args);
-      };
-      (window as any).ym.l = Date.now();
+    const load = () => {
+      if (typeof (window as any).ym === 'function') return;
+      const w = window as any;
+      w.ym = w.ym || function(...args: any[]) { (w.ym.a = w.ym.a || []).push(args); };
+      w.ym.l = 1 * Date.now();
+      for (let j = 0; j < document.scripts.length; j++) {
+        if (document.scripts[j].src === 'https://mc.yandex.ru/metrika/tag.js?id=' + id) return;
+      }
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://mc.yandex.ru/metrika/tag.js?id=' + id;
+      document.getElementsByTagName('script')[0].parentNode!.insertBefore(s, document.getElementsByTagName('script')[0]);
+      w.ym(id, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    };
 
-      const script = document.createElement('script');
-      script.src = 'https://mc.yandex.ru/metrika/tag.js';
-      script.async = true;
-      document.head.appendChild(script);
-
-      script.onload = () => {
-        (window as any).ym(id, 'init', {
-          clickmap: true,
-          trackLinks: true,
-          accurateTrackBounce: true,
-          webvisor: true,
-          ecommerce: 'dataLayer',
-        });
-      };
+    const consent = localStorage.getItem('cookie_consent');
+    if (consent === 'accepted') {
+      load();
+    } else {
+      const handler = () => load();
+      window.addEventListener('cookie-consent-accepted', handler);
+      return () => window.removeEventListener('cookie-consent-accepted', handler);
     }
   }, []);
 
-  useEffect(() => {
-    const id = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID;
-    if (id && (window as any).ym) {
-      (window as any).ym(id, 'hit', pathname + (searchParams.toString() ? '?' + searchParams.toString() : ''));
-    }
-  }, [pathname, searchParams]);
-
   return null;
-}
-
-export default function YandexMetrika() {
-  return (
-    <Suspense fallback={null}>
-      <YandexMetrikaInner />
-    </Suspense>
-  );
 }

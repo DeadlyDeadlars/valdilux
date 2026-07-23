@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState, startTransition } from 'react';
 import styles from './LiveChat.module.css';
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:4000/ws/chat';
@@ -71,7 +71,7 @@ export default function LiveChat() {
   }, [messages, open]);
 
   useEffect(() => {
-    if (open) setUnread(0);
+    if (open) startTransition(() => setUnread(0));
   }, [open]);
 
   const send = (e: React.FormEvent) => {

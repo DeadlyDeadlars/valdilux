@@ -1,48 +1,37 @@
 'use client';
-import { useEffect, Suspense } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
-function GoogleAnalyticsInner() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
+export default function GoogleAnalytics() {
   useEffect(() => {
     const id = process.env.NEXT_PUBLIC_GA_ID;
     if (!id) return;
 
-    if (!(window as any).gtag) {
-      const script1 = document.createElement('script');
-      script1.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
-      script1.async = true;
-      document.head.appendChild(script1);
+    const load = () => {
+      if (typeof (window as any).gtag === 'function') return;
+      const s1 = document.createElement('script');
+      s1.async = true;
+      s1.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+      document.head.appendChild(s1);
 
-      const script2 = document.createElement('script');
-      script2.innerHTML = `
+      const s2 = document.createElement('script');
+      s2.innerHTML = `
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', '${id}');
       `;
-      document.head.appendChild(script2);
+      document.head.appendChild(s2);
+    };
+
+    const consent = localStorage.getItem('cookie_consent');
+    if (consent === 'accepted') {
+      load();
+    } else {
+      const handler = () => load();
+      window.addEventListener('cookie-consent-accepted', handler);
+      return () => window.removeEventListener('cookie-consent-accepted', handler);
     }
   }, []);
 
-  useEffect(() => {
-    const id = process.env.NEXT_PUBLIC_GA_ID;
-    if (id && (window as any).gtag) {
-      (window as any).gtag('config', id, {
-        page_path: pathname + (searchParams.toString() ? '?' + searchParams.toString() : ''),
-      });
-    }
-  }, [pathname, searchParams]);
-
   return null;
-}
-
-export default function GoogleAnalytics() {
-  return (
-    <Suspense fallback={null}>
-      <GoogleAnalyticsInner />
-    </Suspense>
-  );
 }

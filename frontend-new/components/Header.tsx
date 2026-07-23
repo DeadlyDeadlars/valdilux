@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/lib/cart';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useContactForm } from '@/lib/useContactForm';
 import ThemeToggle from './ThemeToggle';
@@ -35,7 +35,7 @@ export default function Header() {
   const searchRef = useRef<HTMLDivElement>(null);
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { startTransition(() => setMounted(true)); }, []);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);

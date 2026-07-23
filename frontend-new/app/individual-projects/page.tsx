@@ -36,7 +36,7 @@ export default function IndividualProjectsPage() {
         <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
           <img
             src="/photos/individual-projects/ПОСТАВИТЬ1.jpg"
-            alt="Индивидуальный проект"
+            alt="Индивидуальный проект мебели из массива дерева для кабинета"
             style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.12 }}
             onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
           />
@@ -76,7 +76,7 @@ export default function IndividualProjectsPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {examples.map((img, i) => (
               <div key={i} style={{ aspectRatio: '4/3', overflow: 'hidden', background: '#1a1a1a' }}>
-                <img src={img} alt={`Проект ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                <img src={img} alt={`Индивидуальный проект мебели из массива — реализованный проект ValDiLux ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
               </div>
             ))}
           </div>

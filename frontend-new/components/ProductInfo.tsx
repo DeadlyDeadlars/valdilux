@@ -57,7 +57,7 @@ export default function ProductInfo({ product }: { product: Product }) {
               onSelect={setSelectedWood}
             />
           )}
-          <div style={{ color: product.inStock ? '#6a8060' : '#806060', fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1rem' }}>
+          <div style={{ color: product.inStock ? '#6a8060' : '#806060', fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
             {product.inStock ? 'В наличии' : 'Под заказ'}
           </div>
         </div>

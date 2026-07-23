@@ -1,4 +1,14 @@
+import type { Metadata } from 'next';
 import photos from '@/public/photos/ind-zakaz/index.json';
+
+export const metadata: Metadata = {
+  title: 'Портфолио — реализованные проекты мебели из массива | ValDiLux',
+  description: 'Фото готовых проектов мебели из массива дуба, бука и ясеня. Письменные столы, шкафы, стеллажи, индивидуальные проекты для кабинетов.',
+  openGraph: {
+    title: 'Портфолио мебели из массива — ValDiLux',
+    description: 'Фото готовых проектов: столы, шкафы, стеллажи из массива дерева.',
+  },
+};
 
 export default function CasesPage() {
   return (
@@ -18,7 +28,7 @@ export default function CasesPage() {
               <div style={{ position: 'relative', aspectRatio: '4/3', background: '#1a1a1a', overflow: 'hidden' }}>
                 <img
                   src={`/photos/ind-zakaz/${file}`}
-                  alt={`Проект ${i + 1}`}
+                  alt={`Индивидуальный проект мебели из массива дерева — пример работы ValDiLux ${i + 1}`}
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                 />
               </div>

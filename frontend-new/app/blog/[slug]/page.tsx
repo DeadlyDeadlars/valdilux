@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { api } from '@/lib/api';
 import postsData from '@/public/posts.json';
 
@@ -12,6 +13,22 @@ type Post = {
 
 export async function generateStaticParams() {
   return (postsData as any[]).filter((p: any) => p.type === 'article').map((p: any) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  try {
+    const post = await api.get<Post>(`/posts/${params.slug}`);
+    return {
+      title: `${post.title} — блог ValDiLux`,
+      description: post.content.slice(0, 160).replace(/[#*\n]/g, ' '),
+      openGraph: {
+        title: `${post.title} — блог ValDiLux`,
+        description: post.content.slice(0, 160).replace(/[#*\n]/g, ' '),
+      },
+    };
+  } catch {
+    return { title: 'Статья — ValDiLux' };
+  }
 }
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {

@@ -1,5 +1,15 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { api } from '@/lib/api';
+
+export const metadata: Metadata = {
+  title: 'Блог о мебели из массива дерева — ValDiLux',
+  description: 'Полезные статьи о выборе, уходе и изготовлении мебели из массива дуба, бука и ясеня. Советы по обустройству кабинета.',
+  openGraph: {
+    title: 'Блог о мебели из массива дерева — ValDiLux',
+    description: 'Советы по выбору и уходу за мебелью из массива дерева.',
+  },
+};
 
 type Post = {
   id: number;

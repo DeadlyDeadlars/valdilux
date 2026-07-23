@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { api } from '@/lib/api';
 
 type Post = {
@@ -8,6 +9,15 @@ type Post = {
   content: string;
   image?: string;
   createdAt: string;
+};
+
+export const metadata: Metadata = {
+  title: 'Новости и акции — ValDiLux',
+  description: 'Новости мастерской ValDiLux, акции на мебель из массива дерева, новые поступления и события.',
+  openGraph: {
+    title: 'Новости и акции — ValDiLux',
+    description: 'Акции, новинки и события мастерской премиальной мебели.',
+  },
 };
 
 export default async function NewsPage() {
