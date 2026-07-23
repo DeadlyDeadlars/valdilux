@@ -15,24 +15,19 @@ interface CartCtx {
 const CartContext = createContext<CartCtx | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('cart');
-      if (saved) setItems(JSON.parse(saved));
-    } catch {}
-  }, []);
+  const [items, setItems] = useState<CartItem[]>(() => {
+    try { const saved = localStorage.getItem('cart'); return saved ? JSON.parse(saved) : []; } catch { return []; }
+  });
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(items));
   }, [items]);
 
-  const add = (product: Product) =>
+  const add = (product: Product, woodType?: string) =>
     setItems(prev => {
-      const existing = prev.find(i => i.product.id === product.id);
-      if (existing) return prev.map(i => i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
-      return [...prev, { product, quantity: 1 }];
+      const existing = prev.find(i => i.product.id === product.id && i.woodType === woodType);
+      if (existing) return prev.map(i => (i.product.id === product.id && i.woodType === woodType) ? { ...i, quantity: i.quantity + 1 } : i);
+      return [...prev, { product, quantity: 1, woodType }];
     });
 
   const remove = (productId: number) =>

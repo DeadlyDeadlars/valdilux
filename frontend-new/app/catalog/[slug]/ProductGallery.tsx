@@ -50,31 +50,24 @@ export default function ProductGallery({
               <span style={{ color: '#c9a96e', fontSize: '0.55rem', letterSpacing: '0.1em' }}>УВЕЛИЧИТЬ</span>
             </div>
           )}
-        </div>
 
-        {/* Thumbnails */}
-        {allMedia.length > 1 && (
-          <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
-            {allMedia.map((m, i) => (
+          {allMedia.length > 1 && current.type === 'image' && (
+            <>
               <button
-                key={i}
-                onClick={() => setActive(i)}
-                style={{
-                  width: 64, height: 48, border: `1px solid ${i === active ? 'rgba(201,169,110,0.6)' : 'rgba(201,169,110,0.12)'}`,
-                  background: 'var(--bg3)', overflow: 'hidden', cursor: 'pointer', padding: 0, flexShrink: 0,
-                }}
-              >
-                {m.type === 'image' ? (
-                  <img src={`${apiBase}${m.src}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg2)' }}>
-                    <span style={{ color: '#c9a96e', fontSize: '1rem' }}>▶</span>
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
-        )}
+                onClick={e => { e.stopPropagation(); setActive(a => (a - 1 + allMedia.length) % allMedia.length); }}
+                style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(10,10,10,0.5)', border: 'none', color: '#c9a96e', fontSize: '1.5rem', cursor: 'pointer', padding: '0.5rem 0.6rem', lineHeight: 1, borderRadius: 4, transition: 'background 0.2s' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(10,10,10,0.8)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(10,10,10,0.5)')}
+              >‹</button>
+              <button
+                onClick={e => { e.stopPropagation(); setActive(a => (a + 1) % allMedia.length); }}
+                style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(10,10,10,0.5)', border: 'none', color: '#c9a96e', fontSize: '1.5rem', cursor: 'pointer', padding: '0.5rem 0.6rem', lineHeight: 1, borderRadius: 4, transition: 'background 0.2s' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(10,10,10,0.8)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(10,10,10,0.5)')}
+              >›</button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Lightbox */}

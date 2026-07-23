@@ -34,7 +34,8 @@ async function main() {
       material: 'Массив бука', 
       label: 'hit', 
       categoryId: desk.id, 
-      images: '["/photos/boston-2/IMG-20241208-WA0008.jpg","/photos/boston-2/IMG-20250909-WA0012(2).jpg","/photos/boston-2/IMG_20260707_093550_539.jpg","/photos/boston-2/st2 (4).png"]' 
+      images: '["/photos/boston-2/main.png","/photos/boston-2/photo-1.jpg","/photos/boston-2/photo-2.jpg","/photos/boston-2/photo-3.jpg"]',
+      woodPrices: JSON.stringify({ "бук": 163000, "ясень": 261000, "дуб": 277000 })
     },
     { 
       name: 'Стол письменный "Бостон" однотумбовый', 
@@ -50,7 +51,8 @@ async function main() {
       material: 'Массив бука', 
       label: 'new', 
       categoryId: desk.id, 
-      images: '["/photos/boston-1/Главная.jpg","/photos/boston-1/IMG-20250206-WA0005.jpg","/photos/boston-1/IMG-20250309-WA0314.jpg","/photos/boston-1/IMG-20250309-WA0331.jpg","/photos/boston-1/IMG-20250309-WA0333.jpg","/photos/boston-1/IMG-20251122-WA0002.jpg","/photos/boston-1/IMG_20251201_184158_165.jpg","/photos/boston-1/IMG_20260206_090409_760.jpg","/photos/boston-1/IMG_20260322_145524_221.jpg","/photos/boston-1/IMG_20260420_111151_924.jpg"]' 
+      images: '["/photos/boston-1/main.jpg","/photos/boston-1/photo-1.jpg","/photos/boston-1/photo-2.jpg","/photos/boston-1/photo-3.jpg","/photos/boston-1/photo-4.jpg","/photos/boston-1/photo-5.jpg","/photos/boston-1/photo-6.jpg","/photos/boston-1/photo-7.jpg","/photos/boston-1/photo-8.jpg","/photos/boston-1/photo-9.jpg"]',
+      woodPrices: JSON.stringify({ "бук": 128000, "ясень": 205000, "дуб": 218000 })
     },
     { 
       name: 'Стол письменный "Мишель" малый', 
@@ -74,7 +76,8 @@ async function main() {
       material: 'Массив бука', 
       label: null, 
       categoryId: desk.id, 
-      images: '["/photos/mishel-small/IMG-20241217-WA0007 (1).jpg","/photos/mishel-small/IMG-20250228-WA0004(1).jpg","/photos/mishel-small/IMG-20250309-WA0049.jpg","/photos/mishel-small/IMG-20250309-WA0155.jpg","/photos/mishel-small/IMG-20250309-WA0161 (1).jpg","/photos/mishel-small/IMG-20250309-WA0322.jpg","/photos/mishel-small/IMG-20250410-WA0000.jpg","/photos/mishel-small/IMG-20250417-WA0010.jpg","/photos/mishel-small/IMG-20250516-WA0002.jpg","/photos/mishel-small/IMG-20250527-WA0000.jpg"]' 
+      images: '["/photos/mishel-small/main.png","/photos/mishel-small/photo-1.jpg","/photos/mishel-small/photo-2.jpg","/photos/mishel-small/photo-3.jpg","/photos/mishel-small/photo-4.jpg","/photos/mishel-small/photo-5.jpg","/photos/mishel-small/photo-6.jpg","/photos/mishel-small/photo-7.jpg","/photos/mishel-small/photo-8.jpg","/photos/mishel-small/photo-9.jpg","/photos/mishel-small/photo-10.jpg","/photos/mishel-small/photo-11.jpg","/photos/mishel-small/photo-12.jpg","/photos/mishel-small/photo-13.jpg","/photos/mishel-small/photo-14.jpg","/photos/mishel-small/photo-15.jpg","/photos/mishel-small/photo-16.jpg","/photos/mishel-small/photo-17.jpg","/photos/mishel-small/photo-18.jpg","/photos/mishel-small/photo-19.jpg","/photos/mishel-small/photo-20.jpg","/photos/mishel-small/photo-21.jpg","/photos/mishel-small/photo-22.jpg","/photos/mishel-small/photo-23.jpg","/photos/mishel-small/photo-24.jpg","/photos/mishel-small/photo-25.png"]',
+      woodPrices: JSON.stringify({ "бук": 76000, "ясень": 122000, "дуб": 130000 })
     },
     { 
       name: 'Стол письменный "Мишель" большой', 
@@ -94,7 +97,8 @@ async function main() {
       material: 'Массив бука', 
       label: null, 
       categoryId: desk.id, 
-      images: '["/photos/mishel-big/IMG-20241218-WA0020.jpg","/photos/mishel-big/IMG-20250309-WA0095.jpg","/photos/mishel-big/IMG-20250309-WA0175.jpg","/photos/mishel-big/IMG-20250309-WA0409.jpg","/photos/mishel-big/IMG-20250325-WA0005(1).jpg","/photos/mishel-big/IMG-20250408-WA0003.jpg","/photos/mishel-big/IMG-20250812-WA0007.jpg","/photos/mishel-big/IMG-20250828-WA0014.jpg","/photos/mishel-big/IMG-20250915-WA0003.jpg","/photos/mishel-big/IMG-20251021-WA0001(1).jpg"]' 
+      images: '["/photos/mishel-big/main.jpg","/photos/mishel-big/photo-1.jpg","/photos/mishel-big/photo-2.jpg","/photos/mishel-big/photo-3.jpg","/photos/mishel-big/photo-4.jpg","/photos/mishel-big/photo-5.jpg","/photos/mishel-big/photo-6.jpg","/photos/mishel-big/photo-7.jpg","/photos/mishel-big/photo-8.jpg","/photos/mishel-big/photo-9.jpg","/photos/mishel-big/photo-10.jpg","/photos/mishel-big/photo-11.jpg","/photos/mishel-big/photo-12.jpg","/photos/mishel-big/photo-13.jpg","/photos/mishel-big/photo-14.jpg","/photos/mishel-big/photo-15.jpg","/photos/mishel-big/photo-16.jpg","/photos/mishel-big/photo-17.jpg","/photos/mishel-big/photo-18.jpg","/photos/mishel-big/photo-19.jpg","/photos/mishel-big/photo-20.jpg","/photos/mishel-big/photo-21.png","/photos/mishel-big/photo-22.png","/photos/mishel-big/photo-23.png","/photos/mishel-big/photo-24.png","/photos/mishel-big/photo-25.png","/photos/mishel-big/photo-26.png","/photos/mishel-big/photo-27.jpg","/photos/mishel-big/photo-28.jpg","/photos/mishel-big/photo-29.jpg","/photos/mishel-big/photo-30.jpg","/photos/mishel-big/photo-31.jpg","/photos/mishel-big/photo-32.jpg","/photos/mishel-big/photo-33.jpg","/photos/mishel-big/photo-34.jpg","/photos/mishel-big/photo-35.jpg","/photos/mishel-big/photo-36.jpg","/photos/mishel-big/photo-37.jpg"]',
+      woodPrices: JSON.stringify({ "бук": 83000, "ясень": 130000, "дуб": 140000 })
     },
     { 
       name: 'Стол письменный "Рейка"', 
@@ -122,7 +126,8 @@ async function main() {
       material: 'Массив бука', 
       label: 'hit', 
       categoryId: desk.id, 
-      images: '["/photos/rejka-desk/1(1).jpg","/photos/rejka-desk/2(3).jpg","/photos/rejka-desk/3(2).jpg","/photos/rejka-desk/4(1).jpg","/photos/rejka-desk/5(1).jpg","/photos/rejka-desk/6(3).jpg","/photos/rejka-desk/7(3).jpg","/photos/rejka-desk/IMG_20260528_161656_722.jpg"]' 
+      images: '["/photos/rejka-desk/photo-0.jpg","/photos/rejka-desk/photo-1.jpg","/photos/rejka-desk/photo-2.jpg","/photos/rejka-desk/photo-3.jpg","/photos/rejka-desk/photo-4.jpg","/photos/rejka-desk/photo-5.jpg","/photos/rejka-desk/photo-6.jpg","/photos/rejka-desk/photo-7.jpg","/photos/rejka-desk/photo-8.jpg"]',
+      woodPrices: JSON.stringify({ "бук": 153000, "ясень": 245000, "дуб": 260000 })
     },
     { 
       name: 'Шкаф книжный', 
@@ -142,7 +147,8 @@ async function main() {
       material: 'Массив бука', 
       label: null, 
       categoryId: bookcase.id, 
-      images: '["/photos/bookcase/IMG-20250309-WA0345.jpg","/photos/bookcase/IMG-20250402-WA0012.jpg","/photos/bookcase/IMG-20250422-WA0014(1).jpg","/photos/bookcase/IMG-20250429-WA0014(1).jpg","/photos/bookcase/IMG-20250526-WA0002.jpg","/photos/bookcase/IMG-20250526-WA0003.jpg","/photos/bookcase/IMG-20250716-WA0010.jpg","/photos/bookcase/IMG-20250811-WA0044_edit_173124659637186.jpg","/photos/bookcase/IMG-20250811-WA0045.jpg","/photos/bookcase/IMG-20250811-WA0046(1).jpg"]' 
+      images: '["/photos/bookcase/main.jpg","/photos/bookcase/photo-1.jpg","/photos/bookcase/photo-2.jpg","/photos/bookcase/photo-3.jpg","/photos/bookcase/photo-4.jpg","/photos/bookcase/photo-5.jpg","/photos/bookcase/photo-6.jpg","/photos/bookcase/photo-7.jpg","/photos/bookcase/photo-8.jpg","/photos/bookcase/photo-9.jpg","/photos/bookcase/photo-10.jpg","/photos/bookcase/photo-11.jpg","/photos/bookcase/photo-12.jpg","/photos/bookcase/photo-13.jpg","/photos/bookcase/photo-14.jpg","/photos/bookcase/photo-15.jpg","/photos/bookcase/photo-16.jpg","/photos/bookcase/photo-17.jpg","/photos/bookcase/photo-18.jpg","/photos/bookcase/photo-19.jpg","/photos/bookcase/photo-20.jpg","/photos/bookcase/photo-21.jpg","/photos/bookcase/photo-22.jpg","/photos/bookcase/photo-23.jpg"]',
+      woodPrices: JSON.stringify({ "бук": 133000, "ясень": 213000, "дуб": 226000 })
     },
     { 
       name: 'Стеллаж "Рейка"', 
@@ -156,7 +162,8 @@ async function main() {
       material: 'Массив бука', 
       label: null, 
       categoryId: shelf.id, 
-      images: '["/photos/rejka-shelf/IMG_20250311_172358_886.jpg","/photos/rejka-shelf/IMG_20250317_141857_830.jpg","/photos/rejka-shelf/IMG_20250317_141901_881.jpg","/photos/rejka-shelf/IMG_20250317_141905_335.jpg"]' 
+      images: '["/photos/rejka-shelf/photo-0.jpg","/photos/rejka-shelf/photo-1.jpg","/photos/rejka-shelf/photo-2.jpg","/photos/rejka-shelf/photo-3.jpg"]',
+      woodPrices: JSON.stringify({ "бук": 93000, "ясень": 149000, "дуб": 158000 })
     },
   ];
 

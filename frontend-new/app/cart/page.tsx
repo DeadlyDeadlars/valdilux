@@ -114,11 +114,11 @@ export default function CartPage() {
                     <div style={{ color: '#c9a96e', fontSize: '0.85rem', marginTop: '0.5rem' }}>{product.price.toLocaleString('ru-RU')} ₽</div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <button onClick={() => update(product.id, quantity - 1)} style={{ width: 28, height: 28, background: 'none', border: '1px solid rgba(201,169,110,0.2)', color: '#c9a96e', cursor: 'pointer', fontSize: '1rem' }}>−</button>
+                    <button type="button" onClick={() => update(product.id, quantity - 1)} style={{ width: 28, height: 28, background: 'none', border: '1px solid rgba(201,169,110,0.2)', color: '#c9a96e', cursor: 'pointer', fontSize: '1rem' }}>−</button>
                     <span style={{ color: 'var(--text2)', fontSize: '0.85rem', minWidth: 20, textAlign: 'center' }}>{quantity}</span>
-                    <button onClick={() => update(product.id, quantity + 1)} style={{ width: 28, height: 28, background: 'none', border: '1px solid rgba(201,169,110,0.2)', color: '#c9a96e', cursor: 'pointer', fontSize: '1rem' }}>+</button>
+                    <button type="button" onClick={() => update(product.id, quantity + 1)} style={{ width: 28, height: 28, background: 'none', border: '1px solid rgba(201,169,110,0.2)', color: '#c9a96e', cursor: 'pointer', fontSize: '1rem' }}>+</button>
                   </div>
-                  <button onClick={() => remove(product.id)} style={{ background: 'none', border: 'none', color: 'var(--muted2)', cursor: 'pointer', fontSize: '1.2rem', padding: '0 0.5rem' }}>×</button>
+                  <button type="button" onClick={() => remove(product.id)} style={{ background: 'none', border: 'none', color: 'var(--muted2)', cursor: 'pointer', fontSize: '1.2rem', padding: '0 0.5rem' }}>×</button>
                 </div>
               ))}
             </div>
@@ -147,15 +147,15 @@ export default function CartPage() {
                   <>
                     <div style={{ marginBottom: '1rem' }}>
                       <input placeholder="Промокод" value={coupon} onChange={e => setCoupon(e.target.value.toUpperCase())} style={{ ...inputStyle, marginBottom: '0.5rem' }} />
-                      <button onClick={applyCoupon} style={{ width: '100%', padding: '0.5rem', background: 'none', border: '1px solid rgba(201,169,110,0.3)', color: '#c9a96e', fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer' }}>
+                      <button type="button" onClick={applyCoupon} style={{ width: '100%', padding: '0.5rem', background: 'none', border: '1px solid rgba(201,169,110,0.3)', color: '#c9a96e', fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer' }}>
                         Применить
                       </button>
                       {couponError && <p style={{ color: '#c06060', fontSize: '0.65rem', marginTop: '0.5rem' }}>{couponError}</p>}
                     </div>
-                    <button onClick={() => setCheckout(true)} className="btn-gold-solid" style={{ width: '100%', cursor: 'pointer', border: 'none' }}>
+                    <button type="button" onClick={() => setCheckout(true)} className="btn-gold-solid" style={{ width: '100%', cursor: 'pointer', border: 'none' }}>
                       Оформить заказ
                     </button>
-                    <button onClick={() => setOneClick(true)} style={{ width: '100%', padding: '0.75rem', background: 'none', border: '1px solid rgba(201,169,110,0.2)', color: 'var(--muted)', fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer', marginTop: '0.25rem' }}>
+                    <button type="button" onClick={() => setOneClick(true)} style={{ width: '100%', padding: '0.75rem', background: 'none', border: '1px solid rgba(201,169,110,0.2)', color: 'var(--muted)', fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer', marginTop: '0.25rem' }}>
                       Купить в 1 клик
                     </button>
                     {oneClick && oneClickStatus !== 'ok' && (

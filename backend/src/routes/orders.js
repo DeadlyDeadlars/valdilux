@@ -2,27 +2,33 @@ import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import { prisma } from '../db.js';
+import { adminAuth } from '../middleware/adminAuth.js';
 
 const router = Router();
 
-const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
-const isAdmin = (req) => req.headers['x-admin-pass'] === ADMIN_PASS;
-
 // Все заказы (для админки)
-router.get('/all', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.get('/all', adminAuth, async (req, res) => {
   try {
-    const orders = await prisma.order.findMany({
-      include: { items: { include: { product: true } } },
-      orderBy: { createdAt: 'desc' },
-    });
-    res.json(orders);
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.order.findMany({
+        skip,
+        take: limit,
+        include: { items: { include: { product: true } } },
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.order.count(),
+    ]);
+
+    res.json({ data, total, page, limit });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // Обновить статус заказа (для админки)
-router.patch('/:id/status', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.patch('/:id/status', adminAuth, async (req, res) => {
   try {
     const order = await prisma.order.update({
       where: { id: parseInt(req.params.id) },

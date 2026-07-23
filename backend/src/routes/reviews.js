@@ -1,14 +1,12 @@
 import { Router } from 'express';
 import { prisma } from '../db.js';
 import jwt from 'jsonwebtoken';
+import { adminAuth } from '../middleware/adminAuth.js';
 
 const router = Router();
-const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
-const isAdmin = (req) => req.headers['x-admin-pass'] === ADMIN_PASS;
 
 // Все неодобренные отзывы (для админки)
-router.get('/pending', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.get('/pending', adminAuth, async (req, res) => {
   try {
     const reviews = await prisma.review.findMany({ where: { approved: false }, orderBy: { createdAt: 'desc' }, include: { product: { select: { name: true } } } });
     res.json(reviews);
@@ -16,17 +14,28 @@ router.get('/pending', async (req, res) => {
 });
 
 // Все отзывы (для админки)
-router.get('/all', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.get('/all', adminAuth, async (req, res) => {
   try {
-    const reviews = await prisma.review.findMany({ orderBy: { createdAt: 'desc' }, include: { product: { select: { name: true } } } });
-    res.json(reviews);
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.review.findMany({
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: { product: { select: { name: true } } },
+      }),
+      prisma.review.count(),
+    ]);
+
+    res.json({ data, total, page, limit });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // Одобрить/отклонить отзыв
-router.patch('/:id', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.patch('/:id', adminAuth, async (req, res) => {
   try {
     const review = await prisma.review.update({ where: { id: parseInt(req.params.id) }, data: { approved: req.body.approved } });
     res.json(review);
@@ -34,8 +43,7 @@ router.patch('/:id', async (req, res) => {
 });
 
 // Удалить отзыв
-router.delete('/:id', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.delete('/:id', adminAuth, async (req, res) => {
   try {
     await prisma.review.delete({ where: { id: parseInt(req.params.id) } });
     res.json({ ok: true });

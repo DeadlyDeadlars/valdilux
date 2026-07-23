@@ -7,8 +7,6 @@ import { getMainProductPhoto } from '@/lib/product-photos';
 import QuickView from './QuickView';
 import ResponsiveImage from './ResponsiveImage';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:4000';
-
 export default function ProductCard({ product }: { product: Product }) {
   const [showQuick, setShowQuick] = useState(false);
   const { add } = useCompare();
@@ -40,14 +38,12 @@ export default function ProductCard({ product }: { product: Product }) {
             )}
             <h3 className="serif" style={{ color: 'var(--text2)', fontSize: '1rem', fontWeight: 300, marginBottom: '0.75rem', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{product.name}</h3>
             <div style={{ color: '#c9a96e', fontSize: '0.85rem', fontWeight: 300 }}>
-              от {product.price.toLocaleString('ru-RU')} ₽
+              {product.price.toLocaleString('ru-RU')} ₽
             </div>
           </div>
         </Link>
-        <button onClick={() => setShowQuick(true)} className="hidden md:flex"
-          style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(201,169,110,0.3)', color: '#c9a96e', width: 32, height: 32, cursor: 'pointer', transition: 'all 0.3s', alignItems: 'center', justifyContent: 'center', padding: 0 }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(201,169,110,0.15)'; e.currentTarget.style.borderColor = 'rgba(201,169,110,0.5)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(10,10,10,0.9)'; e.currentTarget.style.borderColor = 'rgba(201,169,110,0.3)'; }}
+        <button type="button" onClick={() => setShowQuick(true)} className="hidden md:flex gold-icon-btn"
+          style={{ position: 'absolute', top: 12, right: 12, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', padding: 0 }}
           title="Быстрый просмотр"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -55,10 +51,8 @@ export default function ProductCard({ product }: { product: Product }) {
             <circle cx="12" cy="12" r="3"/>
           </svg>
         </button>
-        <button onClick={(e) => { e.preventDefault(); add(product); }} className="hidden md:flex"
-          style={{ position: 'absolute', top: 12, right: 52, background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(201,169,110,0.3)', color: '#c9a96e', width: 32, height: 32, cursor: 'pointer', transition: 'all 0.3s', alignItems: 'center', justifyContent: 'center', padding: 0 }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(201,169,110,0.15)'; e.currentTarget.style.borderColor = 'rgba(201,169,110,0.5)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(10,10,10,0.9)'; e.currentTarget.style.borderColor = 'rgba(201,169,110,0.3)'; }}
+        <button type="button" onClick={(e) => { e.preventDefault(); add(product); }} className="hidden md:flex gold-icon-btn"
+          style={{ position: 'absolute', top: 12, right: 52, width: 32, height: 32, alignItems: 'center', justifyContent: 'center', padding: 0 }}
           title="Сравнить"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

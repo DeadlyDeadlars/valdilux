@@ -1,9 +1,11 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
+import styles from './LiveChat.module.css';
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:4000/ws/chat';
 
 function getChatId() {
+  if (typeof window === 'undefined') return '';
   let id = localStorage.getItem('chat_id');
   if (!id) { id = Math.random().toString(36).slice(2); localStorage.setItem('chat_id', id); }
   return id;
@@ -19,16 +21,32 @@ export default function LiveChat() {
   const [unread, setUnread] = useState(0);
   const ws = useRef<WebSocket | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const reconnectTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const reconnectAttempts = useRef(0);
+  const mounted = useRef(true);
 
-  useEffect(() => {
+  const connect = useRef(() => {
     const chatId = getChatId();
+    if (!chatId) return;
     const socket = new WebSocket(`${WS_URL}?chatId=${chatId}`);
     ws.current = socket;
 
-    socket.onopen = () => setConnected(true);
-    socket.onclose = () => setConnected(false);
+    socket.onopen = () => {
+      setConnected(true);
+      reconnectAttempts.current = 0;
+    };
+
+    socket.onclose = () => {
+      setConnected(false);
+      if (!mounted.current) return;
+      const delay = Math.min(1000 * 2 ** reconnectAttempts.current, 30000);
+      reconnectAttempts.current++;
+      reconnectTimer.current = setTimeout(connect.current, delay);
+    };
+
     socket.onmessage = (e) => {
-      const data = JSON.parse(e.data);
+      let data: any;
+      try { data = JSON.parse(e.data); } catch { return; }
       if (data.type === 'history') {
         setMessages(data.messages || []);
       } else if (data.type === 'message') {
@@ -36,8 +54,16 @@ export default function LiveChat() {
         if (data.from === 'manager' && !open) setUnread(n => n + 1);
       }
     };
+  });
 
-    return () => socket.close();
+  useEffect(() => {
+    mounted.current = true;
+    connect.current();
+    return () => {
+      mounted.current = false;
+      clearTimeout(reconnectTimer.current);
+      ws.current?.close();
+    };
   }, []);
 
   useEffect(() => {
@@ -56,35 +82,26 @@ export default function LiveChat() {
   };
 
   return (
-    <div style={{ position: 'fixed', bottom: '1.5rem', right: '1.5rem', zIndex: 1000 }}>
+    <div className={styles.wrapper}>
       {open && (
-        <div style={{ width: 320, height: 420, background: '#141414', border: '1px solid rgba(201,169,110,0.2)', display: 'flex', flexDirection: 'column', marginBottom: '0.75rem', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
-          {/* Header */}
-          <div style={{ padding: '0.875rem 1rem', borderBottom: '1px solid rgba(201,169,110,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.card}>
+          <div className={styles.header}>
             <div>
-              <div className="serif" style={{ color: 'var(--text2)', fontSize: '0.9rem', fontWeight: 300 }}>ValDiLux</div>
-              <div style={{ color: connected ? '#6a8060' : '#6a6058', fontSize: '0.6rem', marginTop: '0.1rem' }}>
+              <div className={`serif ${styles.brandName}`}>ValDiLux</div>
+              <div className={connected ? styles.statusOnline : styles.statusOffline}>
                 {connected ? '● онлайн' : '○ подключение...'}
               </div>
             </div>
-            <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', color: '#4a4540', cursor: 'pointer', fontSize: '1.2rem', lineHeight: 1 }}>×</button>
+            <button onClick={() => setOpen(false)} className={styles.closeBtn}>×</button>
           </div>
 
-          {/* Messages */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div className={styles.messages}>
             {messages.length === 0 && (
-              <div style={{ color: '#4a4540', fontSize: '0.75rem', textAlign: 'center', marginTop: '2rem' }}>
-                Здравствуйте! Чем можем помочь?
-              </div>
+              <div className={styles.empty}>Здравствуйте! Чем можем помочь?</div>
             )}
-            {messages.map((m, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: m.from === 'user' ? 'flex-end' : 'flex-start' }}>
-                <div style={{
-                  maxWidth: '80%', padding: '0.5rem 0.75rem', fontSize: '0.78rem', lineHeight: 1.5,
-                  background: m.from === 'user' ? 'rgba(201,169,110,0.15)' : '#1e1e1e',
-                  color: m.from === 'user' ? '#c9a96e' : '#c8bfb0',
-                  border: `1px solid ${m.from === 'user' ? 'rgba(201,169,110,0.2)' : 'rgba(255,255,255,0.05)'}`,
-                }}>
+            {messages.map(m => (
+              <div key={m.ts} className={`${styles.row} ${m.from === 'user' ? styles.rowRight : styles.rowLeft}`}>
+                <div className={`${styles.bubble} ${m.from === 'user' ? styles.bubbleUser : styles.bubbleManager}`}>
                   {m.text}
                 </div>
               </div>
@@ -92,22 +109,18 @@ export default function LiveChat() {
             <div ref={bottomRef} />
           </div>
 
-          {/* Input */}
-          <form onSubmit={send} style={{ borderTop: '1px solid rgba(201,169,110,0.1)', display: 'flex' }}>
+          <form onSubmit={send} className={styles.form}>
             <input
               value={text} onChange={e => setText(e.target.value)}
               placeholder="Написать сообщение..."
-              style={{ flex: 1, background: 'none', border: 'none', color: 'var(--text2)', padding: '0.75rem 1rem', fontSize: '0.78rem', outline: 'none', fontFamily: 'Inter, sans-serif' }}
+              className={styles.input}
             />
-            <button type="submit" style={{ padding: '0 1rem', background: 'none', border: 'none', color: '#c9a96e', cursor: 'pointer', fontSize: '1rem' }}>→</button>
+            <button type="submit" className={styles.sendBtn}>→</button>
           </form>
         </div>
       )}
 
-      {/* Toggle button */}
-      <button onClick={() => setOpen(o => !o)}
-        style={{ width: 52, height: 52, borderRadius: '50%', background: '#c9a96e', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(201,169,110,0.3)', position: 'relative' }}
-      >
+      <button onClick={() => setOpen(o => !o)} className={styles.toggleBtn}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           {open
             ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
@@ -115,9 +128,7 @@ export default function LiveChat() {
           }
         </svg>
         {unread > 0 && (
-          <span style={{ position: 'absolute', top: 0, right: 0, width: 18, height: 18, borderRadius: '50%', background: '#c06060', color: '#fff', fontSize: '0.6rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {unread}
-          </span>
+          <span className={styles.badge}>{unread}</span>
         )}
       </button>
     </div>

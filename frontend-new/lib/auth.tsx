@@ -17,19 +17,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') return localStorage.getItem('token');
+    return null;
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem('token');
-    if (stored) {
-      setToken(stored);
-      api.get<User>('/auth/me', { headers: { Authorization: `Bearer ${stored}` } })
+    if (token) {
+      api.get<User>('/auth/me', { headers: { Authorization: `Bearer ${token}` } })
         .then(setUser)
         .catch(() => { localStorage.removeItem('token'); setToken(null); })
         .finally(() => setLoading(false));
     } else {
-      setLoading(false);
+      setLoading(false); // eslint-disable-line react-hooks/set-state-in-effect
     }
   }, []);
 

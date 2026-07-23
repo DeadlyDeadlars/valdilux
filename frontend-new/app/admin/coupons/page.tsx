@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
+import AdminPagination from '@/components/admin/Pagination';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
-const PASS = process.env.NEXT_PUBLIC_ADMIN_PASS || '';
+const PROXY = '/api/admin/proxy';
 
 const empty = { code: '', discount: '', type: 'percent', minAmount: '', active: true, expiresAt: '' };
 
@@ -10,25 +10,28 @@ export default function AdminCouponsPage() {
   const [coupons, setCoupons] = useState<any[]>([]);
   const [form, setForm] = useState(empty);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 20;
 
   const load = () => {
-    fetch(`${API}/coupons/all`, { headers: { 'x-admin-pass': PASS } })
-      .then(r => r.ok ? r.json() : []).then(setCoupons).finally(() => setLoading(false));
+    fetch(`${PROXY}/coupons/all?page=${page}&limit=${limit}`)
+      .then(r => r.ok ? r.json() : { data: [], total: 0 }).then(d => { setCoupons(d.data || []); setTotal(d.total || 0); }).finally(() => setLoading(false));
   };
-  useEffect(load, []);
+  useEffect(load, [page]);
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch(`${API}/coupons`, {
+    await fetch(`${PROXY}/coupons`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-pass': PASS },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...form, discount: Number(form.discount), minAmount: Number(form.minAmount), expiresAt: form.expiresAt || null }),
     });
     setForm(empty); load();
   };
 
   const toggle = async (id: number, active: boolean) => {
-    await fetch(`${API}/coupons/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'x-admin-pass': PASS }, body: JSON.stringify({ active }) });
+    await fetch(`${PROXY}/coupons/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ active }) });
     setCoupons(prev => prev.map(c => c.id === id ? { ...c, active } : c));
   };
 
@@ -49,22 +52,29 @@ export default function AdminCouponsPage() {
         <button type="submit" className="btn-gold-solid" style={{ border: 'none', cursor: 'pointer', fontSize: '0.7rem' }}>Создать</button>
       </form>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        {coupons.map(c => (
-          <div key={c.id} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', padding: '0.875rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-              <span style={{ color: '#c9a96e', fontSize: '0.85rem', fontFamily: 'monospace' }}>{c.code}</span>
-              <span style={{ color: 'var(--text2)', fontSize: '0.78rem' }}>{c.discount}{c.type === 'percent' ? '%' : ' ₽'}</span>
-              {c.minAmount > 0 && <span style={{ color: 'var(--muted2)', fontSize: '0.7rem' }}>от {c.minAmount.toLocaleString('ru-RU')} ₽</span>}
-              {c.expiresAt && <span style={{ color: 'var(--muted2)', fontSize: '0.7rem' }}>до {new Date(c.expiresAt).toLocaleDateString('ru-RU')}</span>}
-            </div>
-            <button onClick={() => toggle(c.id, !c.active)}
-              style={{ padding: '0.3rem 0.75rem', background: 'none', border: `1px solid ${c.active ? 'rgba(106,128,96,0.4)' : 'rgba(201,169,110,0.2)'}`, color: c.active ? '#6a8060' : '#6a6058', fontSize: '0.65rem', cursor: 'pointer' }}>
-              {c.active ? 'Активен' : 'Отключён'}
-            </button>
+      {loading ? <div style={{ color: 'var(--muted2)' }}>Загрузка...</div> : coupons.length === 0 ? (
+        <div style={{ color: 'var(--muted2)', fontSize: '0.8rem' }}>Нет купонов</div>
+      ) : (
+        <>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {coupons.map(c => (
+              <div key={c.id} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', padding: '0.875rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                  <span style={{ color: '#c9a96e', fontSize: '0.85rem', fontFamily: 'monospace' }}>{c.code}</span>
+                  <span style={{ color: 'var(--text2)', fontSize: '0.78rem' }}>{c.discount}{c.type === 'percent' ? '%' : ' ₽'}</span>
+                  {c.minAmount > 0 && <span style={{ color: 'var(--muted2)', fontSize: '0.7rem' }}>от {c.minAmount.toLocaleString('ru-RU')} ₽</span>}
+                  {c.expiresAt && <span style={{ color: 'var(--muted2)', fontSize: '0.7rem' }}>до {new Date(c.expiresAt).toLocaleDateString('ru-RU')}</span>}
+                </div>
+                <button onClick={() => toggle(c.id, !c.active)}
+                  style={{ padding: '0.3rem 0.75rem', background: 'none', border: `1px solid ${c.active ? 'rgba(106,128,96,0.4)' : 'rgba(201,169,110,0.2)'}`, color: c.active ? '#6a8060' : '#6a6058', fontSize: '0.65rem', cursor: 'pointer' }}>
+                  {c.active ? 'Активен' : 'Отключён'}
+                </button>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+          <AdminPagination page={page} totalPages={Math.ceil(total / limit)} setPage={setPage} />
+        </>
+      )}
     </div>
   );
 }

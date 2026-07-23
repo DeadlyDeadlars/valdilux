@@ -45,7 +45,7 @@ export default function Reviews({ productId }: { productId: number }) {
 
   return (
     <div style={{ marginTop: '5rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
         <h2 className="serif" style={{ color: 'var(--text)', fontSize: '1.5rem', fontWeight: 300 }}>Отзывы</h2>
         {!showForm && (
           <button onClick={() => setShowForm(true)} className="btn-gold" style={{ cursor: 'pointer', border: '1px solid rgba(201,169,110,0.4)', background: 'none' }}>
@@ -67,7 +67,7 @@ export default function Reviews({ productId }: { productId: number }) {
             </div>
           </div>
           <textarea required placeholder="Ваш отзыв *" rows={4} value={form.comment} onChange={e => setForm(f => ({ ...f, comment: e.target.value }))} style={{ ...inputStyle, resize: 'vertical', marginBottom: '1rem' }} />
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <button type="submit" disabled={loading} className="btn-gold-solid" style={{ cursor: 'pointer', border: 'none', opacity: loading ? 0.6 : 1 }}>
               {loading ? 'Отправка...' : 'Отправить'}
             </button>

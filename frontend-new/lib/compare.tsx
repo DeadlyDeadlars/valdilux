@@ -13,12 +13,9 @@ type CompareContextType = {
 const CompareContext = createContext<CompareContextType | undefined>(undefined);
 
 export function CompareProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<Product[]>([]);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('compare');
-    if (stored) setItems(JSON.parse(stored));
-  }, []);
+  const [items, setItems] = useState<Product[]>(() => {
+    try { const stored = localStorage.getItem('compare'); return stored ? JSON.parse(stored) : []; } catch { return []; }
+  });
 
   useEffect(() => {
     localStorage.setItem('compare', JSON.stringify(items));

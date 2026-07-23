@@ -1,83 +1,183 @@
 import { WebSocketServer } from 'ws';
+import jwt from 'jsonwebtoken';
+import { prisma } from './db.js';
 
-// chatId -> Set of ws connections (посетитель + менеджеры)
+const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+
 const rooms = new Map();
-// chatId -> messages[]
-const history = new Map();
-// менеджерские соединения
 const managers = new Set();
+const authPending = new WeakSet();
+const messageTimestamps = new WeakMap();
+
+const RATE_WINDOW = 60_000;
+const RATE_MAX = 20;
+const HEARTBEAT_INTERVAL = 30_000;
+const HISTORY_LIMIT = 500;
 
 export function setupChat(server) {
   const wss = new WebSocketServer({ server, path: '/ws/chat' });
 
+  const hb = setInterval(() => {
+    wss.clients.forEach(ws => {
+      if (ws.isAlive === false) return ws.terminate();
+      ws.isAlive = false;
+      ws.ping();
+    });
+  }, HEARTBEAT_INTERVAL);
+  wss.on('close', () => clearInterval(hb));
+
   wss.on('connection', (ws, req) => {
+    ws.isAlive = true;
+    ws.on('pong', () => { ws.isAlive = true; });
+
     const url = new URL(req.url, 'http://localhost');
     const chatId = url.searchParams.get('chatId');
-    const isManager = url.searchParams.get('manager') === process.env.ADMIN_PASS;
 
-    if (isManager) {
-      managers.add(ws);
-      // отправить список активных чатов
-      ws.send(JSON.stringify({ type: 'rooms', rooms: [...rooms.keys()] }));
-
-      ws.on('message', (raw) => {
-        const msg = JSON.parse(raw);
-        // менеджер отвечает в конкретный чат
-        if (msg.type === 'message' && msg.chatId) {
-          const entry = { from: 'manager', text: msg.text, ts: Date.now() };
-          saveAndBroadcast(msg.chatId, entry, ws);
-        }
-        // менеджер запрашивает историю чата
-        if (msg.type === 'history' && msg.chatId) {
-          ws.send(JSON.stringify({ type: 'history', chatId: msg.chatId, messages: history.get(msg.chatId) || [] }));
-        }
-      });
-
-      ws.on('close', () => managers.delete(ws));
-      return;
+    if (chatId) {
+      handleVisitor(ws, chatId);
+    } else {
+      authPending.add(ws);
+      ws.on('message', (raw) => handleManagerAuth(ws, raw));
+      ws.on('close', () => { authPending.delete(ws); managers.delete(ws); });
     }
-
-    if (!chatId) { ws.close(); return; }
-
-    if (!rooms.has(chatId)) rooms.set(chatId, new Set());
-    rooms.get(chatId).add(ws);
-
-    // отправить историю новому посетителю
-    ws.send(JSON.stringify({ type: 'history', messages: history.get(chatId) || [] }));
-
-    // уведомить менеджеров о новом чате
-    broadcast(managers, { type: 'rooms', rooms: [...rooms.keys()] });
-
-    ws.on('message', (raw) => {
-      const msg = JSON.parse(raw);
-      if (msg.type === 'message') {
-        const entry = { from: 'user', text: msg.text, ts: Date.now() };
-        saveAndBroadcast(chatId, entry, ws);
-      }
-    });
-
-    ws.on('close', () => {
-      rooms.get(chatId)?.delete(ws);
-      if (rooms.get(chatId)?.size === 0) rooms.delete(chatId);
-    });
   });
 }
 
-function saveAndBroadcast(chatId, entry, sender) {
-  if (!history.has(chatId)) history.set(chatId, []);
-  history.get(chatId).push(entry);
+function handleVisitor(ws, chatId) {
+  if (!rooms.has(chatId)) rooms.set(chatId, new Set());
+  rooms.get(chatId).add(ws);
+  ws.chatId = chatId;
 
-  const payload = JSON.stringify({ type: 'message', chatId, ...entry });
+  prisma.chatMessage.findMany({
+    where: { chatId },
+    orderBy: { createdAt: 'desc' },
+    take: HISTORY_LIMIT,
+  }).then(messages => {
+    ws.send(JSON.stringify({
+      type: 'history',
+      messages: messages.reverse().map(m => ({ from: m.from, text: m.text, ts: m.createdAt.getTime() })),
+    }));
+  }).catch(() => {
+    ws.send(JSON.stringify({ type: 'history', messages: [] }));
+  });
 
-  // всем в комнате
-  rooms.get(chatId)?.forEach(ws => ws !== sender && ws.readyState === 1 && ws.send(payload));
-  // всем менеджерам
-  managers.forEach(ws => ws !== sender && ws.readyState === 1 && ws.send(payload));
-  // отправителю тоже (эхо)
-  sender.readyState === 1 && sender.send(payload);
+  broadcast(managers, { type: 'rooms', rooms: [...rooms.keys()] });
+
+  ws.on('message', (raw) => {
+    if (!checkRate(ws)) {
+      ws.send(JSON.stringify({ type: 'error', message: 'Слишком много сообщений. Подождите минуту.' }));
+      return;
+    }
+    let msg;
+    try { msg = JSON.parse(raw); } catch { return; }
+    if (msg.type !== 'message') return;
+
+    const text = (msg.text || '').trim();
+    if (!text || text.length > 2000) return;
+
+    const entry = { from: 'user', text, ts: Date.now() };
+
+    prisma.chatMessage.create({ data: { chatId, from: 'user', text } }).catch(() => {});
+
+    const payload = JSON.stringify({ type: 'message', chatId, ...entry });
+    rooms.get(chatId)?.forEach(c => c.readyState === 1 && c.send(payload));
+    broadcast(managers, payload);
+  });
+
+  ws.on('close', () => {
+    rooms.get(chatId)?.delete(ws);
+    if (rooms.get(chatId)?.size === 0) {
+      rooms.delete(chatId);
+      broadcast(managers, { type: 'rooms', rooms: [...rooms.keys()] });
+    }
+  });
+}
+
+function handleManagerAuth(ws, raw) {
+  let msg;
+  try { msg = JSON.parse(raw); } catch { return; }
+  if (msg.type !== 'auth') {
+    ws.send(JSON.stringify({ type: 'error', message: 'First message must be auth' }));
+    return ws.close();
+  }
+
+  let authorized = false;
+  if (msg.password && msg.password === process.env.ADMIN_PASS) {
+    authorized = true;
+  }
+  if (msg.token) {
+    try {
+      const decoded = jwt.verify(msg.token, JWT_SECRET);
+      if (decoded.role === 'admin') authorized = true;
+    } catch {}
+  }
+
+  if (!authorized) {
+    ws.send(JSON.stringify({ type: 'auth', ok: false }));
+    return ws.close();
+  }
+
+  authPending.delete(ws);
+  managers.add(ws);
+  ws.send(JSON.stringify({ type: 'auth', ok: true }));
+  ws.send(JSON.stringify({ type: 'rooms', rooms: [...rooms.keys()] }));
+
+  ws.removeAllListeners('message');
+  ws.on('message', (raw) => handleManagerMsg(ws, raw));
+  ws.on('close', () => managers.delete(ws));
+}
+
+function handleManagerMsg(ws, raw) {
+  if (!checkRate(ws)) {
+    ws.send(JSON.stringify({ type: 'error', message: 'Слишком много сообщений. Подождите минуту.' }));
+    return;
+  }
+  let msg;
+  try { msg = JSON.parse(raw); } catch { return; }
+
+  if (msg.type === 'message' && msg.chatId) {
+    const text = (msg.text || '').trim();
+    if (!text || text.length > 2000) return;
+
+    const entry = { from: 'manager', text, ts: Date.now() };
+    prisma.chatMessage.create({ data: { chatId: msg.chatId, from: 'manager', text } }).catch(() => {});
+
+    const payload = JSON.stringify({ type: 'message', chatId: msg.chatId, ...entry });
+    rooms.get(msg.chatId)?.forEach(c => c.readyState === 1 && c.send(payload));
+    ws.send(payload);
+  }
+
+  if (msg.type === 'history' && msg.chatId) {
+    prisma.chatMessage.findMany({
+      where: { chatId: msg.chatId },
+      orderBy: { createdAt: 'desc' },
+      take: HISTORY_LIMIT,
+    }).then(messages => {
+      ws.send(JSON.stringify({
+        type: 'history',
+        chatId: msg.chatId,
+        messages: messages.reverse().map(m => ({ from: m.from, text: m.text, ts: m.createdAt.getTime() })),
+      }));
+    }).catch(() => {
+      ws.send(JSON.stringify({ type: 'history', chatId: msg.chatId, messages: [] }));
+    });
+  }
+}
+
+function checkRate(ws) {
+  const now = Date.now();
+  let timestamps = messageTimestamps.get(ws);
+  if (!timestamps) {
+    timestamps = [];
+    messageTimestamps.set(ws, timestamps);
+  }
+  while (timestamps.length && timestamps[0] < now - RATE_WINDOW) timestamps.shift();
+  if (timestamps.length >= RATE_MAX) return false;
+  timestamps.push(now);
+  return true;
 }
 
 function broadcast(set, data) {
-  const payload = JSON.stringify(data);
+  const payload = typeof data === 'string' ? data : JSON.stringify(data);
   set.forEach(ws => ws.readyState === 1 && ws.send(payload));
 }

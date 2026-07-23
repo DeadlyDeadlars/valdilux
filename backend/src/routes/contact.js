@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { prisma } from '../db.js';
+import { adminAuth } from '../middleware/adminAuth.js';
 
 const router = Router();
 
@@ -10,7 +11,8 @@ router.post('/', async (req, res) => {
     const msg = await prisma.contactMessage.create({ data: { name, phone, email, message } });
     res.status(201).json(msg);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    console.error('Contact create error:', e);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -24,7 +26,8 @@ router.post('/callback', async (req, res) => {
     });
     res.status(201).json(msg);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    console.error('Contact callback error:', e);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -38,7 +41,38 @@ router.post('/question', async (req, res) => {
     });
     res.status(201).json(msg);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    console.error('Contact question error:', e);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Админ: все заявки
+router.get('/all', adminAuth, async (req, res) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.contactMessage.findMany({ skip, take: limit, orderBy: { createdAt: 'desc' } }),
+      prisma.contactMessage.count(),
+    ]);
+
+    res.json({ data, total, page, limit });
+  } catch (e) {
+    console.error('Contact list error:', e);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Админ: удалить заявку
+router.delete('/:id', adminAuth, async (req, res) => {
+  try {
+    await prisma.contactMessage.delete({ where: { id: parseInt(req.params.id) } });
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('Contact delete error:', e);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

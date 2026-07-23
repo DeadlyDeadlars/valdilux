@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 model Category {
@@ -26,6 +26,7 @@ model Product {
   inStock     Boolean    @default(true)
   images      String     @default("[]") // JSON array of paths
   options     String     @default("[]") // JSON: [{ name, values: [{ label, priceModifier }] }]
+  woodPrices  String?    // JSON: { "бук": 163000, "ясень": 261000, "дуб": 277000 }
   categoryId  Int
   category    Category   @relation(fields: [categoryId], references: [id])
   orderItems  OrderItem[]
@@ -102,6 +103,16 @@ model ContactMessage {
   email     String?
   message   String
   createdAt DateTime @default(now())
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  chatId    String
+  from      String   // "user" | "manager"
+  text      String
+  createdAt DateTime @default(now())
+
+  @@index([chatId, createdAt])
 }
 
 model Post {

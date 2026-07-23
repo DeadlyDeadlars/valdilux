@@ -17,6 +17,8 @@ import paymentRouter from './routes/payment.js';
 import couponsRouter from './routes/coupons.js';
 import { router as authRouter } from './routes/auth.js';
 import feedRouter from './routes/feed.js';
+import adminProductsRouter from './routes/admin-products.js';
+import usersRouter from './routes/users.js';
 
 const app = express();
 const server = createServer(app);
@@ -34,6 +36,7 @@ app.use('/api/', rateLimit({ windowMs: 60_000, max: 120, standardHeaders: true, 
 // Жёсткий лимит на авторизацию (защита от брутфорса)
 app.use('/api/auth/login', rateLimit({ windowMs: 15 * 60_000, max: 10, message: { error: 'Слишком много попыток. Попробуйте через 15 минут.' } }));
 app.use('/api/auth/register', rateLimit({ windowMs: 60_000, max: 5, message: { error: 'Слишком много регистраций.' } }));
+app.use('/api/contact', rateLimit({ windowMs: 60_000, max: 5, message: { error: 'Слишком много запросов. Попробуйте через минуту.' } }));
 
 // await setupAdmin(app).catch(e => console.error('AdminJS failed to load:', e.message));
 
@@ -48,13 +51,18 @@ app.use('/api/posts', postsRouter);
 app.use('/api/payment', paymentRouter);
 app.use('/api/coupons', couponsRouter);
 app.use('/api/feed', feedRouter);
+app.use('/api/admin/products', adminProductsRouter);
+app.use('/api/users', usersRouter);
 
 app.get('/api/health', (_, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 4000;
-server.listen(PORT, '0.0.0.0', () => {
-  setupChat(server);
-  console.log(`Backend running on http://0.0.0.0:${PORT}`);
-});
 
-export { prisma };
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(PORT, '0.0.0.0', () => {
+    setupChat(server);
+    console.log(`Backend running on http://0.0.0.0:${PORT}`);
+  });
+}
+
+export { app, prisma };

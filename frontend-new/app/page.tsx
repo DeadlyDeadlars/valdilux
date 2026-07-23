@@ -35,7 +35,7 @@ const MAIN_CATEGORIES = [
 ];
 
 export default async function HomePage() {
-  const { categories, hits, newItems } = await getData();
+  const { hits, newItems } = await getData();
 
   return (
     <>
@@ -54,7 +54,7 @@ export default async function HomePage() {
           </h1>
           <div className="fade-up-3" style={{ marginTop: '3rem', display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link href="/catalog" className="btn-gold">Исследовать коллекцию</Link>
-            <Link href="/contacts" className="btn-gold">Индивидуальный проект</Link>
+            <Link href="/individual-projects" className="btn-gold">Индивидуальный проект</Link>
           </div>
         </div>
         <div style={{ position: 'absolute', bottom: 40, left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
@@ -161,8 +161,8 @@ export default async function HomePage() {
           {/* Фото кабинета */}
           <div style={{ aspectRatio: '4/3', overflow: 'hidden', border: '1px solid var(--border2)' }}>
             <img
-              src="/cabinet.jpg"
-              alt="Кабинет по индивидуальному проекту"
+              src="/photos/individual-projects/ПОСТАВИТЬ1.jpg"
+              alt="Индивидуальный проект"
               style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }}
             />
           </div>

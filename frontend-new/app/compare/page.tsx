@@ -29,7 +29,7 @@ export default function ComparePage() {
       <div style={{ background: 'var(--bg2)', borderBottom: '1px solid var(--border)', padding: '3rem 1.5rem 2rem' }}>
         <div style={{ maxWidth: '80rem', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <h1 className="serif" style={{ color: 'var(--text)', fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', fontWeight: 300 }}>Сравнение товаров</h1>
-          <button onClick={clear} className="btn-gold" style={{ cursor: 'pointer', border: '1px solid rgba(201,169,110,0.4)', background: 'none' }}>
+          <button type="button" onClick={clear} className="btn-gold" style={{ cursor: 'pointer', border: '1px solid rgba(201,169,110,0.4)', background: 'none' }}>
             Очистить
           </button>
         </div>
@@ -43,7 +43,7 @@ export default function ComparePage() {
               {items.map(item => (
                 <th key={item.id} style={{ padding: '1rem', borderBottom: '1px solid var(--border)', minWidth: 200 }}>
                   <div style={{ position: 'relative' }}>
-                    <button onClick={() => remove(item.id)} style={{ position: 'absolute', top: 0, right: 0, background: 'none', border: 'none', color: '#c06060', cursor: 'pointer', fontSize: '1.2rem' }}>×</button>
+                    <button type="button" onClick={() => remove(item.id)} style={{ position: 'absolute', top: 0, right: 0, background: 'none', border: 'none', color: '#c06060', cursor: 'pointer', fontSize: '1.2rem' }}>×</button>
                     <Link href={`/catalog/${item.slug}`} style={{ textDecoration: 'none' }}>
                       {item.images?.[0] && (
                         <img src={`${API_BASE}${item.images[0]}`} alt={item.name} style={{ width: '100%', aspectRatio: '4/3', objectFit: 'cover', marginBottom: '1rem' }} />

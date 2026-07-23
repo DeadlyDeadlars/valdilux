@@ -1,22 +1,27 @@
 import { Router } from 'express';
 import { prisma } from '../db.js';
+import { adminAuth } from '../middleware/adminAuth.js';
 
 const router = Router();
-const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
-const isAdmin = (req) => req.headers['x-admin-pass'] === ADMIN_PASS;
 
 // Все купоны (для админки)
-router.get('/all', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.get('/all', adminAuth, async (req, res) => {
   try {
-    const coupons = await prisma.coupon.findMany({ orderBy: { createdAt: 'desc' } });
-    res.json(coupons);
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.coupon.findMany({ skip, take: limit, orderBy: { createdAt: 'desc' } }),
+      prisma.coupon.count(),
+    ]);
+
+    res.json({ data, total, page, limit });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // Создать купон
-router.post('/', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.post('/', adminAuth, async (req, res) => {
   try {
     const { code, discount, type, minAmount, active, expiresAt } = req.body;
     const coupon = await prisma.coupon.create({ data: { code: code.toUpperCase(), discount: Number(discount), type, minAmount: Number(minAmount) || 0, active: active ?? true, expiresAt: expiresAt ? new Date(expiresAt) : null } });
@@ -25,8 +30,7 @@ router.post('/', async (req, res) => {
 });
 
 // Обновить купон (toggle active)
-router.patch('/:id', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.patch('/:id', adminAuth, async (req, res) => {
   try {
     const coupon = await prisma.coupon.update({ where: { id: parseInt(req.params.id) }, data: req.body });
     res.json(coupon);

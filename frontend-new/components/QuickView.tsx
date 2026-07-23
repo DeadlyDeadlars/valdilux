@@ -17,7 +17,7 @@ export default function QuickView({ product, onClose }: { product: Product; onCl
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg)', border: '1px solid rgba(201,169,110,0.15)', maxWidth: '56rem', width: '100%', maxHeight: '90vh', overflow: 'auto', position: 'relative' }}>
-        <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(10,10,10,0.9)', border: 'none', color: '#c9a96e', width: 40, height: 40, cursor: 'pointer', fontSize: '1.5rem', zIndex: 1 }}>×</button>
+        <button type="button" onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'rgba(10,10,10,0.9)', border: 'none', color: '#c9a96e', width: 40, height: 40, cursor: 'pointer', fontSize: '1.5rem', zIndex: 1 }}>×</button>
         
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div style={{ background: '#141414', aspectRatio: '4/3', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -35,7 +35,7 @@ export default function QuickView({ product, onClose }: { product: Product; onCl
               <div style={{ color: 'var(--muted)', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '1rem' }}>{product.material}</div>
             )}
             <div style={{ color: '#c9a96e', fontSize: '1.25rem', fontWeight: 300, marginBottom: '0.5rem' }}>
-              от {product.price.toLocaleString('ru-RU')} ₽
+              {product.price.toLocaleString('ru-RU')} ₽
             </div>
             <div style={{ color: product.inStock ? '#6a8060' : '#806060', fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
               {product.inStock ? 'В наличии' : 'Под заказ'}

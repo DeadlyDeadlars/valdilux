@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -39,13 +40,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="canonical" href="https://valdilux.ru" />
         <meta name="yandex-verification" content="your-yandex-verification-code" />
         <meta name="google-site-verification" content="your-google-verification-code" />
-        {/* Предотвращение мигания при загрузке */}
-        <script dangerouslySetInnerHTML={{ __html: `
-          try {
-            var t = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', t);
-          } catch(e){}
-        `}} />
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`try{var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t)}catch(e){}`}
+        </Script>
       </head>
       <body>
         <AuthProvider>

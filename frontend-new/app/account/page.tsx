@@ -35,12 +35,11 @@ export default function AccountPage() {
     const headers = { Authorization: `Bearer ${token}` };
     
     if (tab === 'orders') {
-      setLoading(true);
       api.get<Order[]>('/auth/orders', { headers }).then(setOrders).finally(() => setLoading(false));
     } else if (tab === 'wishlist') {
-      setLoading(true);
       api.get<Product[]>('/auth/wishlist', { headers }).then(setWishlist).finally(() => setLoading(false));
     } else if (tab === 'profile' && user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProfile({ name: user.name, phone: user.phone || '' });
       setLoading(false);
     }

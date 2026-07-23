@@ -45,9 +45,12 @@ router.post('/create', async (req, res) => {
 // Webhook от ЮKassa
 router.post('/webhook', async (req, res) => {
   try {
-    const { object } = req.body;
-    if (object?.status === 'succeeded') {
+    const { event, object } = req.body;
+    if (event === 'payment.succeeded' && object?.status === 'succeeded') {
       const orderId = parseInt(object.metadata.orderId);
+      if (!orderId) return res.status(400).json({ error: 'Invalid orderId' });
+      const order = await prisma.order.findUnique({ where: { id: orderId } });
+      if (!order) return res.status(404).json({ error: 'Order not found' });
       await prisma.order.update({ where: { id: orderId }, data: { status: 'paid' } });
     }
     res.json({ ok: true });

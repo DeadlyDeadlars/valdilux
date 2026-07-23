@@ -21,7 +21,7 @@ export default function CatalogClient({ categories }: { categories: Category[] }
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => { setIsMounted(true); }, []);
+  useEffect(() => { setIsMounted(true); }, []); // eslint-disable-line react-hooks/set-state-in-effect
 
   const category = searchParams.get('category') || '';
   const sort = searchParams.get('sort') || 'popular';
@@ -38,7 +38,6 @@ export default function CatalogClient({ categories }: { categories: Category[] }
 
   const load = useCallback(async () => {
     console.log('[CatalogClient] Loading products with params:', { category, sort, page });
-    setLoading(true);
     try {
       const params = new URLSearchParams();
       if (category) params.set('category', category);
@@ -56,7 +55,7 @@ export default function CatalogClient({ categories }: { categories: Category[] }
     setLoading(false);
   }, [category, sort, page]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { load(); }, [load]); // eslint-disable-line react-hooks/set-state-in-effect
 
   return (
     <div style={{ paddingTop: '5rem' }}>

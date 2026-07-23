@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
+import AdminPagination from '@/components/admin/Pagination';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
-const PASS = process.env.NEXT_PUBLIC_ADMIN_PASS || '';
+const PROXY = '/api/admin/proxy';
 
 const empty = { title: '', slug: '', content: '', type: 'article', image: '', published: false };
 
@@ -11,23 +11,27 @@ export default function AdminPostsPage() {
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 20;
 
   const load = () => {
-    fetch(`${API}/posts/all`, { headers: { 'x-admin-pass': PASS } })
-      .then(r => r.ok ? r.json() : []).then(setPosts).finally(() => setLoading(false));
+    fetch(`${PROXY}/posts/all?page=${page}&limit=${limit}`)
+      .then(r => r.ok ? r.json() : { data: [], total: 0 }).then(d => { setPosts(d.data || []); setTotal(d.total || 0); }).finally(() => setLoading(false));
   };
-  useEffect(load, []);
+  useEffect(load, [page]);
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     const method = editing ? 'PUT' : 'POST';
-    const url = editing ? `${API}/posts/${editing}` : `${API}/posts`;
-    await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'x-admin-pass': PASS }, body: JSON.stringify(form) });
+    const url = editing ? `${PROXY}/posts/${editing}` : `${PROXY}/posts`;
+    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     setForm(empty); setEditing(null); load();
   };
 
   const remove = async (id: number) => {
-    await fetch(`${API}/posts/${id}`, { method: 'DELETE', headers: { 'x-admin-pass': PASS } });
+    if (!confirm('Удалить пост?')) return;
+    await fetch(`${PROXY}/posts/${id}`, { method: 'DELETE' });
     setPosts(prev => prev.filter(p => p.id !== id));
   };
 
@@ -56,22 +60,29 @@ export default function AdminPostsPage() {
         </div>
       </form>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        {posts.map(p => (
-          <div key={p.id} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', padding: '0.875rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <span style={{ color: 'var(--text2)', fontSize: '0.8rem' }}>{p.title}</span>
-              <span style={{ color: 'var(--muted2)', fontSize: '0.65rem', marginLeft: '0.75rem' }}>{p.type}</span>
-              <span style={{ color: p.published ? '#6a8060' : '#806060', fontSize: '0.65rem', marginLeft: '0.75rem' }}>{p.published ? '● опубликован' : '○ черновик'}</span>
-            </div>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button onClick={() => { setForm({ title: p.title, slug: p.slug, content: p.content, type: p.type, image: p.image || '', published: p.published }); setEditing(p.id); }}
-                style={{ background: 'none', border: 'none', color: '#c9a96e', fontSize: '0.7rem', cursor: 'pointer' }}>Ред.</button>
-              <button onClick={() => remove(p.id)} style={{ background: 'none', border: 'none', color: '#c06060', fontSize: '0.7rem', cursor: 'pointer' }}>Удалить</button>
-            </div>
+      {loading ? <div style={{ color: 'var(--muted2)' }}>Загрузка...</div> : posts.length === 0 ? (
+        <div style={{ color: 'var(--muted2)', fontSize: '0.8rem' }}>Нет постов</div>
+      ) : (
+        <>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {posts.map(p => (
+              <div key={p.id} style={{ background: 'var(--bg3)', border: '1px solid var(--border)', padding: '0.875rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <span style={{ color: 'var(--text2)', fontSize: '0.8rem' }}>{p.title}</span>
+                  <span style={{ color: 'var(--muted2)', fontSize: '0.65rem', marginLeft: '0.75rem' }}>{p.type}</span>
+                  <span style={{ color: p.published ? '#6a8060' : '#806060', fontSize: '0.65rem', marginLeft: '0.75rem' }}>{p.published ? '● опубликован' : '○ черновик'}</span>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button onClick={() => { setForm({ title: p.title, slug: p.slug, content: p.content, type: p.type, image: p.image || '', published: p.published }); setEditing(p.id); }}
+                    style={{ background: 'none', border: 'none', color: '#c9a96e', fontSize: '0.7rem', cursor: 'pointer' }}>Ред.</button>
+                  <button onClick={() => remove(p.id)} style={{ background: 'none', border: 'none', color: '#c06060', fontSize: '0.7rem', cursor: 'pointer' }}>Удалить</button>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+          <AdminPagination page={page} totalPages={Math.ceil(total / limit)} setPage={setPage} />
+        </>
+      )}
     </div>
   );
 }

@@ -12,8 +12,8 @@ function YandexMetrikaInner() {
 
     // Инициализация
     if (!(window as any).ym) {
-      (window as any).ym = (window as any).ym || function() {
-        ((window as any).ym.a = (window as any).ym.a || []).push(arguments);
+      (window as any).ym = (window as any).ym || function(...args: any[]) {
+        ((window as any).ym.a = (window as any).ym.a || []).push(args);
       };
       (window as any).ym.l = Date.now();
 

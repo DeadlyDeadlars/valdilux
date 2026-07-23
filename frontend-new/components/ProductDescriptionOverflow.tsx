@@ -36,7 +36,6 @@ export default function ProductDescriptionOverflow({
 
       // Get description position relative to gallery
       const descriptionRect = descriptionRef.current.getBoundingClientRect();
-      const wrapperRect = wrapperRef.current.getBoundingClientRect();
       
       // Check if description exceeds gallery height
       // We add some buffer (50px) to account for padding/margins

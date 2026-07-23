@@ -1,0 +1,159 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.title {
+  color: var(--text);
+  font-size: 1.8rem;
+  font-weight: 300;
+}
+
+.titleCount {
+  color: var(--muted2);
+  font-size: 0.9rem;
+  margin-left: 0.75rem;
+  font-weight: 400;
+}
+
+.searchInput {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 0.6rem 1rem;
+  font-size: 0.78rem;
+  outline: none;
+  font-family: Inter, sans-serif;
+  width: 240px;
+}
+
+.loading {
+  color: var(--muted2);
+  font-size: 0.8rem;
+}
+
+.empty {
+  color: var(--muted2);
+  font-size: 0.8rem;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+}
+
+.th {
+  padding: 0.5rem 1rem;
+  color: var(--muted2);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.td {
+  padding: 0.75rem 1rem;
+  color: var(--text2);
+  font-size: 0.78rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tdMuted {
+  color: var(--muted);
+}
+
+.typeBadge {
+  font-size: 0.65rem;
+}
+
+.phoneLink {
+  color: #c9a96e;
+  text-decoration: none;
+}
+
+.messageCell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dateCell {
+  color: var(--muted);
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  color: #c06060;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.deleteBtn:hover {
+  text-decoration: underline;
+}
+
+.idCell {
+  color: var(--muted2);
+}
+
+/* Responsive: stacked cards on mobile */
+@media (max-width: 768px) {
+  .table,
+  .thead,
+  .tbody,
+  .tr,
+  .th,
+  .td {
+    display: block;
+  }
+
+  .thead {
+    display: none;
+  }
+
+  .tr {
+    border-bottom: 1px solid var(--border);
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border: none;
+  }
+
+  .td::before {
+    content: attr(data-label);
+    color: var(--muted2);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
+    min-width: 100px;
+  }
+
+  .messageCell {
+    max-width: none;
+    white-space: normal;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+}

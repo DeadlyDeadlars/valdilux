@@ -41,7 +41,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="flex flex-col md:flex-row gap-2 md:gap-2 md:justify-between md:pt-6" style={{ borderTop: '1px solid rgba(201,169,110,0.06)', paddingTop: '1rem' }}>
-          <p className="md:text-xs" style={{ color: '#2a2520', fontSize: '0.55rem' }}>© 2024–2025 ValDiLux. Все права защищены.</p>
+          <p className="md:text-xs" style={{ color: '#2a2520', fontSize: '0.55rem' }}>© 2024–2026 ValDiLux. Все права защищены.</p>
           <p className="md:text-xs" style={{ color: '#2a2520', fontSize: '0.55rem' }}>ИП Минин Дмитрий Витальевич | ИНН 661903101020</p>
         </div>
       </div>

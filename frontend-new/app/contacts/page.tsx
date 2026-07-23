@@ -1,27 +1,21 @@
 'use client';
 import { useState } from 'react';
-import { api } from '@/lib/api';
+import { useContactForm } from '@/lib/useContactForm';
+
+const inputStyle = {
+  width: '100%', background: 'var(--bg3)', border: '1px solid rgba(201,169,110,0.12)',
+  color: 'var(--text2)', padding: '0.875rem 1rem', fontSize: '0.8rem', outline: 'none',
+  fontFamily: 'Inter, sans-serif', transition: 'border-color 0.3s',
+};
 
 export default function ContactsPage() {
   const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' });
-  const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+  const { status, error, submit } = useContactForm('/contact');
 
-  const submit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('loading');
-    try {
-      await api.post('/contact', form);
-      setStatus('ok');
-      setForm({ name: '', phone: '', email: '', message: '' });
-    } catch {
-      setStatus('error');
-    }
-  };
-
-  const inputStyle = {
-    width: '100%', background: 'var(--bg3)', border: '1px solid rgba(201,169,110,0.12)',
-    color: 'var(--text2)', padding: '0.875rem 1rem', fontSize: '0.8rem', outline: 'none',
-    fontFamily: 'Inter, sans-serif', transition: 'border-color 0.3s',
+    await submit(form);
+    if (status !== 'error') setForm({ name: '', phone: '', email: '', message: '' });
   };
 
   return (
@@ -35,7 +29,6 @@ export default function ContactsPage() {
       </div>
 
       <div style={{ maxWidth: "64rem", margin: "0 auto", padding: "4rem 1.5rem" }} className="grid grid-cols-1 md:grid-cols-2 gap-16">
-        {/* Contacts info */}
         <div>
           {[
             {
@@ -92,7 +85,6 @@ export default function ContactsPage() {
           </div>
         </div>
 
-        {/* Form */}
         <div>
           <h2 className="serif" style={{ color: 'var(--text)', fontSize: '1.5rem', fontWeight: 300, marginBottom: '2rem' }}>Задать вопрос</h2>
           {status === 'ok' ? (
@@ -101,12 +93,12 @@ export default function ContactsPage() {
               <p style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>Мы свяжемся с вами в ближайшее время</p>
             </div>
           ) : (
-            <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <input required placeholder="Ваше имя *" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={inputStyle} />
               <input placeholder="Телефон" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} style={inputStyle} />
               <input type="email" placeholder="Email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} style={inputStyle} />
               <textarea required placeholder="Сообщение *" rows={5} value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} style={{ ...inputStyle, resize: 'vertical' }} />
-              {status === 'error' && <p style={{ color: '#c06060', fontSize: '0.75rem' }}>Ошибка отправки. Попробуйте ещё раз.</p>}
+              {error && <p style={{ color: '#c06060', fontSize: '0.75rem' }}>{error}</p>}
               <button type="submit" disabled={status === 'loading'} className="btn-gold-solid" style={{ cursor: 'pointer', border: 'none', opacity: status === 'loading' ? 0.6 : 1 }}>
                 {status === 'loading' ? 'Отправка...' : 'Отправить'}
               </button>

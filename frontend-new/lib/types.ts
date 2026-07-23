@@ -17,6 +17,7 @@ export interface Product {
   inStock: boolean;
   images: string[];
   options?: string | any[];
+  woodPrices?: Record<string, number>;
   categoryId: number;
   category: Category;
 }
@@ -50,4 +51,5 @@ export interface OrderItem {
 export interface CartItem {
   product: Product;
   quantity: number;
+  woodType?: string;
 }

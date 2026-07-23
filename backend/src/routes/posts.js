@@ -1,22 +1,27 @@
 import { Router } from 'express';
 import { prisma } from '../db.js';
+import { adminAuth } from '../middleware/adminAuth.js';
 
 const router = Router();
-const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
-const isAdmin = (req) => req.headers['x-admin-pass'] === ADMIN_PASS;
 
 // Все посты (для админки)
-router.get('/all', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.get('/all', adminAuth, async (req, res) => {
   try {
-    const posts = await prisma.post.findMany({ orderBy: { createdAt: 'desc' } });
-    res.json(posts);
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.post.findMany({ skip, take: limit, orderBy: { createdAt: 'desc' } }),
+      prisma.post.count(),
+    ]);
+
+    res.json({ data, total, page, limit });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // Создать пост
-router.post('/', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.post('/', adminAuth, async (req, res) => {
   try {
     const { title, slug, content, type, image, published } = req.body;
     const post = await prisma.post.create({ data: { title, slug, content, type, image, published: published ?? false } });
@@ -25,8 +30,7 @@ router.post('/', async (req, res) => {
 });
 
 // Обновить пост
-router.put('/:id', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.put('/:id', adminAuth, async (req, res) => {
   try {
     const { title, slug, content, type, image, published } = req.body;
     const post = await prisma.post.update({ where: { id: parseInt(req.params.id) }, data: { title, slug, content, type, image, published } });
@@ -35,8 +39,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Удалить пост
-router.delete('/:id', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.delete('/:id', adminAuth, async (req, res) => {
   try {
     await prisma.post.delete({ where: { id: parseInt(req.params.id) } });
     res.json({ ok: true });

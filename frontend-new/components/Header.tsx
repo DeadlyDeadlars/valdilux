@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useCart } from '@/lib/cart';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useContactForm } from '@/lib/useContactForm';
 import ThemeToggle from './ThemeToggle';
 
 const CATEGORIES = [
@@ -20,6 +21,7 @@ const CATEGORIES = [
 export default function Header() {
   const { count } = useCart();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [catalogOpen, setCatalogOpen] = useState(false);
@@ -28,10 +30,12 @@ export default function Header() {
   const [suggestions, setSuggestions] = useState<{ name: string; slug: string }[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [callForm, setCallForm] = useState({ name: '', phone: '', time: '' });
-  const [callSent, setCallSent] = useState(false);
+  const { status: callStatus, error: callError, submit: callSubmit } = useContactForm('/contact/callback');
   const catalogRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
@@ -71,19 +75,13 @@ export default function Header() {
 
   const handleCall = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
-      await fetch(`${apiUrl}/contact/callback`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(callForm),
-      });
-    } catch { /* silent */ }
-    setCallSent(true);
-    setTimeout(() => { setCallOpen(false); setCallSent(false); setCallForm({ name: '', phone: '', time: '' }); }, 2000);
+    await callSubmit(callForm);
+    if (callStatus !== 'error') {
+      setTimeout(() => { setCallOpen(false); setCallForm({ name: '', phone: '', time: '' }); }, 2000);
+    }
   };
 
-  const navLink: React.CSSProperties = { color: '#a09080', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.3s', cursor: 'pointer', background: 'none', border: 'none', padding: 0 };
+  const navLink: React.CSSProperties = { fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none', cursor: 'pointer', background: 'none', border: 'none', padding: 0 };
 
   return (
     <>
@@ -122,9 +120,8 @@ export default function Header() {
                   {suggestions.map(s => (
                     <button key={s.slug} type="button"
                       onClick={() => { setSearch(s.name); setShowSuggestions(false); router.push(`/catalog/${s.slug}`); }}
-                      style={{ display: 'block', width: '100%', textAlign: 'left', padding: '0.6rem 1rem', color: '#a09080', fontSize: '0.72rem', background: 'none', border: 'none', cursor: 'pointer', borderBottom: '1px solid var(--gold-dim)' }}
-                      onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold)')}
-                      onMouseLeave={e => (e.currentTarget.style.color = '#a09080')}
+                      className="gold-hover"
+                      style={{ display: 'block', width: '100%', textAlign: 'left', padding: '0.6rem 1rem', fontSize: '0.72rem', background: 'none', border: 'none', cursor: 'pointer', borderBottom: '1px solid var(--gold-dim)' }}
                     >{s.name}</button>
                   ))}
                 </div>
@@ -134,11 +131,10 @@ export default function Header() {
 
           {/* Catalog dropdown */}
           <div ref={catalogRef} style={{ position: 'relative', flexShrink: 0 }} className="hidden md:block">
-            <button
+            <button type="button"
+              className="gold-hover"
               style={{ ...navLink, display: 'flex', alignItems: 'center', gap: 6 }}
               onClick={() => setCatalogOpen(v => !v)}
-              onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold)')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#a09080')}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.2">
                 <rect x="1" y="1" width="5" height="5" /><rect x="8" y="1" width="5" height="5" />
@@ -151,9 +147,8 @@ export default function Header() {
                 {CATEGORIES.map(cat => (
                   <Link key={cat.slug} href={`/catalog?category=${cat.slug}`}
                     onClick={() => setCatalogOpen(false)}
-                    style={{ display: 'block', padding: '0.75rem 1.25rem', color: '#a09080', fontSize: '0.7rem', letterSpacing: '0.1em', textDecoration: 'none', borderBottom: '1px solid var(--gold-dim)', transition: 'color 0.2s' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold)')}
-                    onMouseLeave={e => (e.currentTarget.style.color = '#a09080')}
+                    className="gold-hover"
+                    style={{ display: 'block', padding: '0.75rem 1.25rem', fontSize: '0.7rem', letterSpacing: '0.1em', textDecoration: 'none', borderBottom: '1px solid var(--gold-dim)' }}
                   >{cat.label}</Link>
                 ))}
               </div>
@@ -164,59 +159,44 @@ export default function Header() {
           <div className="hidden md:flex items-center" style={{ gap: '1.25rem', flexShrink: 0, marginLeft: 'auto' }}>
 
             {/* Cart */}
-            <Link href="/cart"
+            <Link href="/cart" className="gold-hover"
               style={{ ...navLink, display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold)')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#a09080')}
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2">
                 <path d="M1 1h2l2.4 7.4a1 1 0 0 0 .96.6h5.28a1 1 0 0 0 .96-.72L14 5H4" />
                 <circle cx="6" cy="13.5" r="1" fill="currentColor" stroke="none" />
                 <circle cx="11" cy="13.5" r="1" fill="currentColor" stroke="none" />
               </svg>
-              {count > 0 && <span style={{ color: 'var(--gold)', fontSize: '0.7rem' }}>{count}</span>}
+              {mounted && count > 0 && <span style={{ color: 'var(--gold)', fontSize: '0.7rem' }}>{count}</span>}
             </Link>
 
             {/* Payment link */}
-            <Link href="/payment" style={navLink}
-              onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold)')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#a09080')}
-            >Оплата</Link>
+            <Link href="/payment" className="gold-hover" style={navLink}>Оплата</Link>
 
             {/* Delivery link */}
-            <Link href="/delivery" style={navLink}
-              onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold)')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#a09080')}
-            >Доставка</Link>
+            <Link href="/delivery" className="gold-hover" style={navLink}>Доставка</Link>
 
             {/* Phone + callback - обновленная структура */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
               <a href="tel:+79058052465" style={{ color: 'var(--gold)', fontSize: '1.1rem', fontWeight: 500, letterSpacing: '0.03em', textDecoration: 'none', whiteSpace: 'nowrap' }}>
                 +7 905 805 24 65
               </a>
-              <button
+              <button type="button"
                 onClick={() => setCallOpen(v => !v)}
                 style={{ background: 'var(--gold-dim)', border: '1px solid var(--gold-dim)', color: 'var(--gold)', fontSize: '0.6rem', letterSpacing: '0.12em', textTransform: 'uppercase', padding: '0.4rem 0.85rem', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold-dim)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'var(--gold-dim)'; }}
               >Заказать звонок</button>
             </div>
 
             {/* Messengers - убрал VK, оставил только Telegram и Max */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <ThemeToggle />
-              <a href="https://t.me/Valdilux_mebel" target="_blank" rel="noopener noreferrer" title="Написать в Telegram" style={{ color: '#a09080', transition: 'color 0.2s' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--gold)')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#a09080')}
-              >
+              <a href="https://t.me/Valdilux_mebel" target="_blank" rel="noopener noreferrer" title="Написать в Telegram" className="gold-hover">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.667l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.978.892z" />
                 </svg>
               </a>
               <a href="https://max.ru/u/f9LHodD0cOKBmU6imfN_JGcs3nE4xAXE4j3ow9K7QaKrK-zb4W1Yj_N19G4" target="_blank" rel="noopener noreferrer" title="Написать в Max">
-                <Image src="/max_icon.jpg" alt="Max" width={18} height={18} style={{ borderRadius: '50%', opacity: 0.7, transition: 'opacity 0.2s' }}
-                  onMouseEnter={e => ((e.currentTarget as HTMLImageElement).style.opacity = '1')}
-                  onMouseLeave={e => ((e.currentTarget as HTMLImageElement).style.opacity = '0.7')}
+                <Image src="/max_icon.jpg" alt="Max" width={18} height={18} className="gold-opacity-hover" style={{ borderRadius: '50%' }}
                 />
               </a>
             </div>
@@ -240,7 +220,7 @@ export default function Header() {
           {/* Burger + Theme Toggle */}
           <div className="md:hidden flex items-center gap-3 ml-4">
             <ThemeToggle />
-            <button className="flex flex-col gap-1.5" onClick={() => setMenuOpen(!menuOpen)} aria-label="Меню">
+            <button type="button" className="flex flex-col gap-1.5" onClick={() => setMenuOpen(!menuOpen)} aria-label="Меню">
               {[0, 1, 2].map(i => (
                 <span key={i} style={{ display: 'block', width: 24, height: 2, background: '#a09080' }} />
               ))}
@@ -275,7 +255,7 @@ export default function Header() {
         >
           <div style={{ background: 'var(--bg)', border: '1px solid var(--gold-dim)', padding: '2.5rem', width: '100%', maxWidth: 400 }}>
             <h2 style={{ color: 'var(--gold)', fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '1.5rem' }}>Обратный звонок</h2>
-            {callSent ? (
+            {callStatus === 'ok' ? (
               <p style={{ color: 'var(--gold)', textAlign: 'center', padding: '1rem 0' }}>Заявка отправлена. Мы перезвоним!</p>
             ) : (
               <form onSubmit={handleCall} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -290,13 +270,15 @@ export default function Header() {
                     style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--gold-dim)', color: 'var(--text)', fontSize: '0.8rem', padding: '0.75rem 1rem', outline: 'none', width: '100%' }}
                   />
                 ))}
-                <button type="submit" style={{ background: 'var(--gold-dim)', border: '1px solid var(--gold-dim)', color: 'var(--gold)', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem', cursor: 'pointer', marginTop: '0.5rem', transition: 'background 0.2s' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--gold-dim)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'var(--gold-dim)')}
-                >Отправить заявку</button>
+                {callError && <p style={{ color: '#c06060', fontSize: '0.75rem', textAlign: 'center' }}>{callError}</p>}
+                <button type="submit" disabled={callStatus === 'loading'}
+                  style={{ background: 'var(--gold-dim)', border: '1px solid var(--gold-dim)', color: 'var(--gold)', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem', cursor: callStatus === 'loading' ? 'default' : 'pointer', marginTop: '0.5rem', opacity: callStatus === 'loading' ? 0.6 : 1 }}
+                >
+                  {callStatus === 'loading' ? 'Отправка...' : 'Отправить заявку'}
+                </button>
               </form>
             )}
-            <button onClick={() => setCallOpen(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: '#5a5248', cursor: 'pointer', fontSize: '1.2rem' }}>×</button>
+            <button type="button" onClick={() => setCallOpen(false)} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: '#5a5248', cursor: 'pointer', fontSize: '1.2rem' }}>×</button>
           </div>
         </div>
       )}

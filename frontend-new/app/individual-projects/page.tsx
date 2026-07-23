@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useContactForm } from '@/lib/useContactForm';
 
 const steps = [
   { n: '01', title: 'Консультация', desc: 'Обсуждаем ваши пожелания, стиль интерьера и бюджет' },
@@ -10,35 +11,21 @@ const steps = [
 ];
 
 const examples = [
-  '/photos/1nATC-gb.jpg',
-  '/photos/9GKWoY0k.jpg',
-  '/photos/CWw1Dh9b.jpg',
-  '/photos/Ce1Den6q.jpg',
-  '/photos/DkESoVwv.jpg',
-  '/photos/FxLhQYGE.jpg',
-  '/photos/dFEP82d5.jpg',
-  '/photos/jSVIyafQ.jpg',
-  '/photos/jwCq7FQ7.jpg',
-  '/photos/of-wRB_L.jpg',
-  '/photos/v1YDmbWZ.jpg',
-  '/photos/vM6q5wD_.jpg',
+  "/photos/individual-projects/ПОСТАВИТЬ1.jpg",
+  "/photos/individual-projects/ПОСТАВИТЬ2.jpg",
+  "/photos/individual-projects/ПОСТАВИТЬ3.jpg",
+  "/photos/individual-projects/ПОСТАВИТЬ4.jpg",
+  "/photos/individual-projects/ПОСТАВИТЬ5.jpg",
+  "/photos/individual-projects/ПОСТАВИТЬ6.jpg",
 ];
 
 export default function IndividualProjectsPage() {
   const [form, setForm] = useState({ name: '', phone: '', comment: '' });
-  const [sent, setSent] = useState(false);
+  const { status, error, submit } = useContactForm('/contact/callback');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
-      await fetch(`${apiUrl}/contact/callback`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, type: 'individual-project' }),
-      });
-    } catch { /* silent */ }
-    setSent(true);
+    await submit({ ...form, type: 'individual-project' });
   };
 
   return (
@@ -48,8 +35,8 @@ export default function IndividualProjectsPage() {
         {/* Фото кабинета на фоне */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
           <img
-            src="/cabinet.jpg"
-            alt="Кабинет по индивидуальному проекту"
+            src="/photos/individual-projects/ПОСТАВИТЬ1.jpg"
+            alt="Индивидуальный проект"
             style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.12 }}
             onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
           />
@@ -96,6 +83,13 @@ export default function IndividualProjectsPage() {
         </div>
       </div>
 
+      {/* CTA */}
+      <div style={{ textAlign: 'center', padding: '0 1.5rem 3rem' }}>
+        <Link href="/contacts" className="btn-gold-solid" style={{ textDecoration: 'none' }}>
+          Связаться с нами
+        </Link>
+      </div>
+
       {/* Форма заявки */}
       <div id="order-form" style={{ maxWidth: '40rem', margin: '0 auto', padding: '5rem 1.5rem' }}>
         <div className="section-label mb-4" style={{ textAlign: 'center' }}>Заявка</div>
@@ -105,7 +99,7 @@ export default function IndividualProjectsPage() {
         <p style={{ color: 'var(--muted)', fontSize: '0.85rem', marginBottom: '2.5rem', textAlign: 'center', lineHeight: 1.8 }}>
           Оставьте заявку — мы свяжемся в течение 2 часов
         </p>
-        {sent ? (
+        {status === 'ok' ? (
           <div style={{ textAlign: 'center', padding: '3rem', border: '1px solid rgba(201,169,110,0.2)', background: 'rgba(201,169,110,0.04)' }}>
             <div style={{ color: '#c9a96e', fontSize: '0.7rem', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Заявка отправлена</div>
             <p style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>Мы свяжемся с вами в ближайшее время.</p>
@@ -129,12 +123,11 @@ export default function IndividualProjectsPage() {
               onChange={e => setForm(f => ({ ...f, comment: e.target.value }))}
               style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(201,169,110,0.15)', color: 'var(--text)', fontSize: '0.8rem', padding: '0.85rem 1rem', outline: 'none', width: '100%', resize: 'vertical', fontFamily: 'inherit' }}
             />
-            <button type="submit"
-              style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.4)', color: '#c9a96e', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem', cursor: 'pointer', marginTop: '0.5rem', transition: 'background 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(201,169,110,0.25)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'rgba(201,169,110,0.15)')}
+            {error && <p style={{ color: '#c06060', fontSize: '0.75rem', textAlign: 'center' }}>{error}</p>}
+            <button type="submit" disabled={status === 'loading'}
+              style={{ background: 'rgba(201,169,110,0.15)', border: '1px solid rgba(201,169,110,0.4)', color: '#c9a96e', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem', cursor: status === 'loading' ? 'default' : 'pointer', marginTop: '0.5rem', opacity: status === 'loading' ? 0.6 : 1 }}
             >
-              Отправить заявку
+              {status === 'loading' ? 'Отправка...' : 'Отправить заявку'}
             </button>
           </form>
         )}

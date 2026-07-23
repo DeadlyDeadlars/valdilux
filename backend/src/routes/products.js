@@ -1,38 +1,34 @@
 import { Router } from 'express';
 import { prisma } from '../db.js';
+import { adminAuth } from '../middleware/adminAuth.js';
 
 const router = Router();
-const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
-const isAdmin = (req) => req.headers['x-admin-pass'] === ADMIN_PASS;
 
 // Создать товар
-router.post('/', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.post('/', adminAuth, async (req, res) => {
   try {
-    const { name, slug, description, price, material, label, inStock, images, options, categoryId } = req.body;
+    const { name, slug, description, price, material, label, inStock, images, options, woodPrices, categoryId } = req.body;
     const product = await prisma.product.create({
-      data: { name, slug, description, price: Number(price), material, label, inStock: inStock ?? true, images: JSON.stringify(images || []), options: JSON.stringify(options || []), categoryId: Number(categoryId) },
+      data: { name, slug, description, price: Number(price), material, label, inStock: inStock ?? true, images: JSON.stringify(images || []), options: JSON.stringify(options || []), woodPrices: woodPrices ? JSON.stringify(woodPrices) : undefined, categoryId: Number(categoryId) },
     });
     res.status(201).json(product);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // Обновить товар
-router.put('/:id', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.put('/:id', adminAuth, async (req, res) => {
   try {
-    const { name, slug, description, price, material, label, inStock, images, options, categoryId } = req.body;
+    const { name, slug, description, price, material, label, inStock, images, options, woodPrices, categoryId } = req.body;
     const product = await prisma.product.update({
       where: { id: parseInt(req.params.id) },
-      data: { name, slug, description, price: Number(price), material, label, inStock, images: JSON.stringify(images || []), options: JSON.stringify(options || []), categoryId: Number(categoryId) },
+      data: { name, slug, description, price: Number(price), material, label, inStock, images: JSON.stringify(images || []), options: JSON.stringify(options || []), woodPrices: woodPrices ? JSON.stringify(woodPrices) : undefined, categoryId: Number(categoryId) },
     });
     res.json(product);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // Удалить товар
-router.delete('/:id', async (req, res) => {
-  if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+router.delete('/:id', adminAuth, async (req, res) => {
   try {
     await prisma.product.delete({ where: { id: parseInt(req.params.id) } });
     res.json({ ok: true });
@@ -92,7 +88,7 @@ router.get('/:slug', async (req, res) => {
 });
 
 function parseImages(p) {
-  return { ...p, images: JSON.parse(p.images || '[]') };
+  return { ...p, images: JSON.parse(p.images || '[]'), woodPrices: p.woodPrices ? JSON.parse(p.woodPrices) : undefined };
 }
 
 export default router;

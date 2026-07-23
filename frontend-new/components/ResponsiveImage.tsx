@@ -15,8 +15,6 @@ interface ResponsiveImageProps {
 export default function ResponsiveImage({
   src,
   alt,
-  width,
-  height,
   className,
   style,
   priority = false,

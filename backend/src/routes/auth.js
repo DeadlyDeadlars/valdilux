@@ -40,6 +40,21 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Админ-логин (возвращает JWT)
+router.post('/admin-login', async (req, res) => {
+  try {
+    const { password } = req.body;
+    const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
+    if (password !== ADMIN_PASS) {
+      return res.status(401).json({ error: 'Неверный пароль' });
+    }
+    const token = jwt.sign({ role: 'admin' }, JWT_SECRET, { expiresIn: '24h' });
+    res.json({ token });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Middleware для проверки токена
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
